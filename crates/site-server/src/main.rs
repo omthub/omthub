@@ -100,6 +100,8 @@ async fn main() -> Result<()> {
     routes: routes.clone(),
   };
 
+  let auth_layer = auth::build_auth_layer().await?;
+
   // build our application with a route
   let app = Router::new()
     .route(
@@ -111,16 +113,15 @@ async fn main() -> Result<()> {
     .layer(
       ServiceBuilder::new()
         .layer(CompressionLayer::new())
-        .layer(auth::build_auth_layer().await?),
+        .layer(auth_layer),
     )
     .with_state(state);
 
   // run our app with hyper
   // `axum::Server` is a re-export of `hyper::Server`
   log::info!("listening on http://{}", &addr);
-  axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)
-    .await
-    .unwrap();
+  let socket = tokio::net::TcpListener::bind(&addr).await.unwrap();
+  axum::serve(socket, app).await.unwrap();
 
   Ok(())
 }
