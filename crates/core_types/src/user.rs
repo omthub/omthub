@@ -5,23 +5,23 @@ use diesel::prelude::*;
 
 use crate::meta::Meta;
 
-#[derive(Clone)]
-#[cfg_attr(feature = "ssr",
-  derive(Queryable, Selectable, Insertable),
-  diesel(table_name = crate::schema::users),
-  diesel(check_for_backend(diesel::pg::Pg)),
-)]
+#[cfg(feature = "ssr")]
+#[derive(Clone, Queryable, Selectable, Insertable)]
+#[diesel(table_name = crate::schema::users)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct User {
-  #[cfg_attr(feature = "ssr", diesel(deserialize_as = crate::utils::UlidWrapper), diesel(serialize_as = String))]
+  #[diesel(deserialize_as = crate::utils::UlidWrapper)]
+  #[diesel(serialize_as = String)]
   pub id:        ulid::Ulid,
   pub name:      String,
   pub email:     String,
   pub pw_hash:   String,
   pub is_active: bool,
-  #[cfg_attr(feature = "ssr", diesel(serialize_as = String))]
+  #[diesel(serialize_as = String)]
   pub meta:      Meta,
 }
 
+#[cfg(feature = "ssr")]
 impl Debug for User {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.debug_struct("User")
