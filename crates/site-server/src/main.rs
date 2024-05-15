@@ -37,7 +37,7 @@ async fn server_fn_handler(
       provide_context(session.clone());
       provide_context(core_types::LoggedInUser(
         auth_session.user.clone().map(core_types::PublicUser::from),
-      ))
+      ));
     },
     request,
   )
@@ -56,7 +56,7 @@ async fn leptos_routes_handler(
       // provide_context(auth_session.clone());
       provide_context(core_types::LoggedInUser(
         auth_session.user.clone().map(core_types::PublicUser::from),
-      ))
+      ));
     },
     site_app::App,
   );
@@ -108,7 +108,11 @@ async fn main() -> Result<()> {
     )
     .leptos_routes_with_handler(routes, get(leptos_routes_handler))
     .fallback(file_and_error_handler)
-    .layer(ServiceBuilder::new().layer(CompressionLayer::new()))
+    .layer(
+      ServiceBuilder::new()
+        .layer(CompressionLayer::new())
+        .layer(auth::build_auth_layer().await?),
+    )
     .with_state(state);
 
   // run our app with hyper
