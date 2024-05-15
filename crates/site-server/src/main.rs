@@ -5,6 +5,7 @@ use axum::{
   extract::{FromRef, State},
   http::Request,
   response::{IntoResponse, Response},
+  routing::get,
   Router,
 };
 use color_eyre::eyre::Result;
@@ -94,13 +95,21 @@ async fn main() -> Result<()> {
   let leptos_options = conf.leptos_options;
   let addr = leptos_options.site_addr;
   let routes = generate_route_list(App);
+  let state = AppState {
+    leptos_options,
+    routes: routes.clone(),
+  };
 
   // build our application with a route
   let app = Router::new()
-    .leptos_routes(&leptos_options, routes, App)
+    .route(
+      "/api/*fn_name",
+      get(server_fn_handler).post(server_fn_handler),
+    )
+    .leptos_routes_with_handler(routes, get(leptos_routes_handler))
     .fallback(file_and_error_handler)
     .layer(ServiceBuilder::new().layer(CompressionLayer::new()))
-    .with_state(leptos_options);
+    .with_state(state);
 
   // run our app with hyper
   // `axum::Server` is a re-export of `hyper::Server`
