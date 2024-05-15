@@ -1,0 +1,21 @@
+[package]
+name = "auth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clients = { path = "../clients" }
+core_types = { path = "../core_types", features = [ "ssr", "auth" ] }
+
+async-trait.workspace = true
+axum-login.workspace = true
+serde.workspace = true
+eyre.workspace = true
+thiserror.workspace = true
+time.workspace = true
+tower-sessions.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+argon2 = { version = "0.5" }
+tower-sessions-sqlx-store = { version = "0.12", features = [ "postgres" ] }

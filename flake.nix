@@ -85,7 +85,7 @@
 
           buildInputs = [
             pkgs.pkg-config # used by many crates for finding system packages
-            pkgs.openssl # needed for many http libraries
+            # pkgs.openssl # needed for many http libraries
           ];
 
         };
@@ -210,6 +210,7 @@
             just # command recipes
             dive # docker images
             cargo-leptos # main leptos build tool
+            diesel-cli
             flyctl # fly.io
             bacon # cargo check w/ hot reload
             cargo-deny # license checking

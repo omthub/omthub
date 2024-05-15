@@ -1,0 +1,20 @@
+[package]
+name = "core_types"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+time = { workspace = true }
+serde = { workspace = true }
+ulid = { version = "1", default-features = false, features = [ "std", "serde" ] }
+serde_json = { version = "1" }
+
+eyre = { workspace = true, optional = true }
+diesel = { workspace = true, optional = true }
+
+axum-login = { workspace = true, optional = true }
+
+[features]
+default = [ ]
+ssr = [ "dep:eyre", "dep:diesel" ]
+auth = [ "dep:axum-login" ]

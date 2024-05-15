@@ -16,16 +16,27 @@ leptos_axum = { version = "0.6", features = ["experimental-islands"] }
 leptos_meta = { version = "0.6", features = ["nightly"] }
 leptos_router = { version = "0.6", features = ["nightly"] }
 
-axum = { version = "0.7.4", features = ["macros", "tracing"] }
+tracing = { version = "0.1" }
+eyre = { version = "0.6" }
 color-eyre = "0.6"
+thiserror = { version = "1" }
+
+serde = { version = "1", features = [ "derive" ] }
+
+async-trait = { version = "0.1" }
+axum = { version = "0.7.4", features = ["macros", "tracing"] }
 console_error_panic_hook = "0.1.7"
 console_log = "1"
 log = "0.4"
-simple_logger = "4.2.0"
+time = { version = "0.3" }
 tokio = { version = "1", features = ["full"] }
 tower = { version = "0.4", features = ["full"] }
 tower-http = { version = "0.5", features = ["full"] }
+tower-sessions = { version = "0.12" }
 wasm-bindgen = "=0.2.92"
+
+axum-login = { version = "0.15" }
+diesel = { version = "2", features = [ "postgres", "r2d2" ] }
 
 [[workspace.metadata.leptos]]
 # this name is used for the wasm, js and css file names
