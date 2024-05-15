@@ -133,11 +133,10 @@
         site-server-container = pkgs.dockerTools.buildLayeredImage {
           name = leptos-options.bin-package;
           tag = "latest";
-          contents = [ site-server pkgs.cacert ];
           config = {
             # runs the executable with tini: https://github.com/krallin/tini
             # this does signal forwarding and zombie process reaping
-            Entrypoint = [ "${pkgs.tini}/bin/tini" "site-server" "--" ];
+            Entrypoint = [ "${pkgs.tini}/bin/tini" "${site-server}/bin/site-server" "--" ];
             WorkingDir = "${site-server}/bin";
             # we provide the env variables that we get from Cargo.toml during development
             # these can be overridden when the container is run, but defaults are needed
