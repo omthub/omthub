@@ -57,6 +57,9 @@ impl From<User> for PublicUser {
   }
 }
 
+#[derive(Clone, Debug)]
+pub struct LoggedInUser(pub Option<PublicUser>);
+
 #[cfg(feature = "auth")]
 mod auth {
   use axum_login::AuthUser;
