@@ -2616,8 +2616,10 @@ dependencies = [
 name = "site-server"
 version = "0.1.0"
 dependencies = [
+ "auth",
  "axum",
  "color-eyre",
+ "core_types",
  "leptos",
  "leptos_axum",
  "leptos_router",
@@ -2626,6 +2628,7 @@ dependencies = [
  "tokio",
  "tower",
  "tower-http",
+ "tower-sessions",
  "tracing-chrome",
  "tracing-subscriber",
 ]
