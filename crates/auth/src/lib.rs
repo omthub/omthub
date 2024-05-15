@@ -179,10 +179,9 @@ pub type AuthSession = axum_login::AuthSession<Backend>;
 pub async fn build_auth_layer(
 ) -> Result<AuthManagerLayer<Backend, tower_sessions_sqlx_store::PostgresStore>>
 {
-  let pool =
-    tower_sessions_sqlx_store::sqlx::PgPool::connect(&clients::db_url()?)
-      .await
-      .wrap_err("failed to connect to db")?;
+  let pool = sqlx::PgPool::connect(&clients::db_url()?)
+    .await
+    .wrap_err("failed to connect to db")?;
   let session_store = tower_sessions_sqlx_store::PostgresStore::new(pool);
 
   tokio::task::spawn(
