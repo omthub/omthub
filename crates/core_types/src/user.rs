@@ -35,6 +35,28 @@ impl Debug for User {
   }
 }
 
+#[derive(Clone, Debug)]
+pub struct PublicUser {
+  pub id:        ulid::Ulid,
+  pub name:      String,
+  pub email:     String,
+  pub is_active: bool,
+  pub meta:      Meta,
+}
+
+#[cfg(feature = "ssr")]
+impl From<User> for PublicUser {
+  fn from(value: User) -> Self {
+    PublicUser {
+      id:        value.id,
+      name:      value.name,
+      email:     value.email,
+      is_active: value.is_active,
+      meta:      value.meta,
+    }
+  }
+}
+
 #[cfg(feature = "auth")]
 mod auth {
   use axum_login::AuthUser;
