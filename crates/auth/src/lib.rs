@@ -179,6 +179,7 @@ pub type AuthSession = axum_login::AuthSession<Backend>;
 pub async fn build_auth_layer(
 ) -> Result<AuthManagerLayer<Backend, tower_sessions_sqlx_store::PostgresStore>>
 {
+  tracing::info!("starting auth layer");
   let pool = sqlx::PgPool::connect(&clients::db_url()?)
     .await
     .wrap_err("failed to connect to db")?;
