@@ -31,6 +31,7 @@ fn get_auth_context() -> core_types::LoggedInUser {
   )
 }
 
+#[component]
 pub fn NavBar() -> impl IntoView {
   view! {
     <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b py-2 shadow-none">
@@ -57,12 +58,12 @@ pub fn PageWrapper() -> impl IntoView {
 }
 
 #[component]
-#[component]
 pub fn HomePage() -> impl IntoView {
   let _user = get_auth_context();
 
   view! {
-    <p>"Hello, World!"</p>
-    <p>{ format!("user: {user:#?}") }</p>
+    <PageWrapper>
+
+    </PageWrapper>
   }
 }
