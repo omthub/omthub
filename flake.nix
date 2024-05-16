@@ -134,9 +134,9 @@
           name = leptos-options.bin-package;
           tag = "latest";
           config = {
-            # runs the executable with tini: https://github.com/krallin/tini
-            # this does signal forwarding and zombie process reaping
-            Entrypoint = [ "${pkgs.tini}/bin/tini" "${site-server}/bin/site-server" "--" ];
+            # we're not using tini here because we don't need to with
+            # fly.io's vm runner, because they use firecracker
+            Entrypoint = [ "${site-server}/bin/site-server" ];
             WorkingDir = "${site-server}/bin";
             # we provide the env variables that we get from Cargo.toml during development
             # these can be overridden when the container is run, but defaults are needed
