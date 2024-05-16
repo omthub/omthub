@@ -216,6 +216,7 @@
             flyctl # fly.io
             bacon # cargo check w/ hot reload
             cargo-deny # license checking
+            yarn # interacting with style deps
           ])
             ++ common-args.buildInputs
             ++ common-args.nativeBuildInputs
