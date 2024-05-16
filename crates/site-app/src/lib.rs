@@ -23,18 +23,17 @@ pub fn App() -> impl IntoView {
   }
 }
 
+#[allow(unused)]
 fn get_auth_context() -> core_types::LoggedInUser {
   // flatten Option<LoggedInUser(Option<PublicUser>)> to LoggedInUser
   core_types::LoggedInUser(
-    use_context::<core_types::LoggedInUser>()
-      .map(|s| s.0)
-      .flatten(),
+    use_context::<core_types::LoggedInUser>().and_then(|s| s.0),
   )
 }
 
 #[component]
 pub fn HomePage() -> impl IntoView {
-  let user = get_auth_context();
+  let _user = get_auth_context();
 
   view! {
     <p>"Hello, World!"</p>

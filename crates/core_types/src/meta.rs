@@ -1,4 +1,6 @@
-use std::{collections::HashMap, error::Error};
+use std::collections::HashMap;
+#[cfg(feature = "ssr")]
+use std::error::Error;
 
 #[cfg(feature = "ssr")]
 use diesel::{
@@ -24,6 +26,10 @@ impl Meta {
 
     Meta(map)
   }
+}
+
+impl Default for Meta {
+  fn default() -> Self { Self::new() }
 }
 
 #[cfg(feature = "ssr")]
