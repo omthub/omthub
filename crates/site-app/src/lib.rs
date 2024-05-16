@@ -31,6 +31,32 @@ fn get_auth_context() -> core_types::LoggedInUser {
   )
 }
 
+pub fn NavBar() -> impl IntoView {
+  view! {
+    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b py-2 shadow-none">
+      <div class="navbar-start">
+        <a class="navbar-item">OMT-Hub</a>
+      </div>
+      <div class="navbar-end">
+        <a class="navbar-item">Home</a>
+      </div>
+    </div>
+  }
+}
+
+#[component]
+pub fn PageWrapper() -> impl IntoView {
+  view! {
+    <div>
+      <NavBar/>
+      <div class="container mx-auto min-h-dvh">
+
+      </div>
+    </div>
+  }
+}
+
+#[component]
 #[component]
 pub fn HomePage() -> impl IntoView {
   let _user = get_auth_context();
