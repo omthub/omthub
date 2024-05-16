@@ -185,12 +185,12 @@
             inherit src;
           };
 
-          # # audit licenses
-          # site-server-deny = craneLib.cargoDeny {
-          #   pname = common_args.pname;
-          #   version = common_args.version;
-          #   inherit src;
-          # };
+          # audit licenses
+          site-server-deny = craneLib.cargoDeny {
+            pname = common-args.pname;
+            version = common-args.version;
+            inherit src;
+          };
 
           # run tests
           site-server-nextest = craneLib.cargoNextest (common-args // {
