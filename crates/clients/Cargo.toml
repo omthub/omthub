@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 diesel.workspace = true
 eyre.workspace = true
+tracing.workspace = true

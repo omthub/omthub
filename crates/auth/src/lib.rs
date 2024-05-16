@@ -180,9 +180,11 @@ pub async fn build_auth_layer(
 ) -> Result<AuthManagerLayer<Backend, tower_sessions_sqlx_store::PostgresStore>>
 {
   tracing::info!("starting auth layer");
+  tracing::debug!("starting new connection to db with sqlx...");
   let pool = sqlx::PgPool::connect(&clients::db_url()?)
     .await
     .wrap_err("failed to connect to db")?;
+  tracing::debug!("connected to db with sqlx");
   let session_store = tower_sessions_sqlx_store::PostgresStore::new(pool);
 
   tokio::task::spawn(
