@@ -9,6 +9,8 @@ pub fn App() -> impl IntoView {
 
   view! {
     <Stylesheet id="leptos" href="/pkg/site.css"/>
+    <Style>{include_str!("../style/fonts.css")}</Style>
+    <Link rel="preload" href="/fonts/inter.ttf" as_="font" type_="font/ttf" crossorigin="anonymous" />
 
     <Title text="A template app"/>
     <Html lang="en" />
