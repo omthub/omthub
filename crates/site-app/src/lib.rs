@@ -17,11 +17,13 @@ pub fn App() -> impl IntoView {
     <Meta charset="utf-8"/>
     <Meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <Router>
-      <Routes>
-        <Route path="/" view=HomePage />
-      </Routes>
-    </Router>
+    <PageWrapper>
+      <Router>
+        <Routes>
+          <Route path="/" view=HomePage />
+        </Routes>
+      </Router>
+    </PageWrapper>
   }
 }
 
@@ -36,24 +38,28 @@ fn get_auth_context() -> core_types::LoggedInUser {
 #[component]
 pub fn NavBar() -> impl IntoView {
   view! {
-    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b py-2 shadow-none">
-      <div class="navbar-start">
-        <a class="navbar-item">OMT-Hub</a>
-      </div>
-      <div class="navbar-end">
-        <a class="navbar-item">Home</a>
+    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none">
+      <div class="container mx-auto flex flex-row">
+        <div class="navbar-start">
+          <a class="navbar-item">"OMT Hub"</a>
+        </div>
+        <div class="navbar-end">
+          <a class="navbar-item" href="/">"Home"</a>
+          <a class="navbar-item" href="/all-translations">"All Translations"</a>
+        </div>
       </div>
     </div>
+    <div class="h-14 w-full" />
   }
 }
 
 #[component]
-pub fn PageWrapper() -> impl IntoView {
+pub fn PageWrapper(children: Children) -> impl IntoView {
   view! {
-    <div>
+    <div class="min-h-dvh flex flex-col">
       <NavBar/>
-      <div class="container mx-auto min-h-dvh">
-
+      <div class="container mx-auto flex-1 flex flex-col gap-8 py-8">
+        { children() }
       </div>
     </div>
   }
@@ -64,8 +70,16 @@ pub fn HomePage() -> impl IntoView {
   let _user = get_auth_context();
 
   view! {
-    <PageWrapper>
-
-    </PageWrapper>
+    <div class="flex flex-col justify-center items-start gap-8 h-[36rem]">
+      <p class="text-xl text-content2">"Welcome to OMT-Hub."</p>
+      <p class="text-7xl font-bold tracking-tight max-w-3xl">
+        "Hear the Bible spoken in your "
+        <span class="text-primary">"mother tongue"</span>
+        "."
+      </p>
+      <a class="btn btn-rounded btn-lg btn-primary font-semibold" href="/all-translations">
+        "Get Started Now"
+      </a>
+    </div>
   }
 }
