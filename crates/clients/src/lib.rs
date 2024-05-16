@@ -18,7 +18,7 @@ pub struct DbConnection(Pool<ConnectionManager<PgConnection>>);
 impl DbConnection {
   pub async fn new() -> Result<Self> {
     tracing::debug!("starting new connection to db with diesel...");
-    let manager = ConnectionManager::<PgConnection>::new(&db_url()?);
+    let manager = ConnectionManager::<PgConnection>::new(db_url()?);
     let pool = DbConnection(Pool::builder().build(manager)?);
     tracing::debug!("connected to db with diesel");
 

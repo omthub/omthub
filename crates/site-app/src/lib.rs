@@ -23,21 +23,47 @@ pub fn App() -> impl IntoView {
   }
 }
 
+#[allow(unused)]
 fn get_auth_context() -> core_types::LoggedInUser {
   // flatten Option<LoggedInUser(Option<PublicUser>)> to LoggedInUser
   core_types::LoggedInUser(
-    use_context::<core_types::LoggedInUser>()
-      .map(|s| s.0)
-      .flatten(),
+    use_context::<core_types::LoggedInUser>().and_then(|s| s.0),
   )
 }
 
 #[component]
+pub fn NavBar() -> impl IntoView {
+  view! {
+    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b py-2 shadow-none">
+      <div class="navbar-start">
+        <a class="navbar-item">OMT-Hub</a>
+      </div>
+      <div class="navbar-end">
+        <a class="navbar-item">Home</a>
+      </div>
+    </div>
+  }
+}
+
+#[component]
+pub fn PageWrapper() -> impl IntoView {
+  view! {
+    <div>
+      <NavBar/>
+      <div class="container mx-auto min-h-dvh">
+
+      </div>
+    </div>
+  }
+}
+
+#[component]
 pub fn HomePage() -> impl IntoView {
-  let user = get_auth_context();
+  let _user = get_auth_context();
 
   view! {
-    <p>"Hello, World!"</p>
-    <p>{ format!("user: {user:#?}") }</p>
+    <PageWrapper>
+
+    </PageWrapper>
   }
 }
