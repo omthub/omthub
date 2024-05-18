@@ -6,7 +6,7 @@ pub fn NavBar() -> impl IntoView {
     <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none font-semibold">
       <div class="container mx-auto h-full flex flex-row">
         <div class="navbar-start">
-          <a class="navbar-item"><span class="text-primary">"OMT"</span>"Hub"</a>
+          <a href="/" class="navbar-item"><span class="text-primary">"OMT"</span>"Hub"</a>
         </div>
         <div class="navbar-end">
           <a href="/" class="navbar-item">"Home"</a>
