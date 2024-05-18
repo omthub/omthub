@@ -26,6 +26,7 @@ pub fn App() -> impl IntoView {
         <Routes>
           <Route path="/" view=crate::pages::homepage::HomePage />
           <Route path="/all-translations" view=crate::pages::all_translations::AllTranslationsPage />
+          <Route path="/auth/signup" view=crate::pages::signup::SignupPage />
         </Routes>
       </Router>
     </crate::components::PageWrapper>

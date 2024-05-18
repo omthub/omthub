@@ -11,6 +11,7 @@ pub fn NavBar() -> impl IntoView {
         <div class="navbar-end">
           <a href="/" class="navbar-item">"Home"</a>
           <a href="/all-translations" class="navbar-item">"All Translations"</a>
+          <a href="/auth/signup" class="navbar-item">"Sign Up"</a>
         </div>
       </div>
     </div>
