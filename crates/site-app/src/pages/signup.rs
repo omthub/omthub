@@ -4,18 +4,30 @@ use crate::components::*;
 
 #[island]
 pub fn SignupPage() -> impl IntoView {
-  let (name, set_name) = create_signal(String::new());
-  let (email, set_email) = create_signal(String::new());
-  let (password, set_password) = create_signal(String::new());
-  let (confirm, set_confirm) = create_signal(String::new());
+  let (name, set_name) = create_signal::<Option<String>>(None);
+  let (email, set_email) = create_signal::<Option<String>>(None);
+  let (password, set_password) = create_signal::<Option<String>>(None);
+  let (confirm, set_confirm) = create_signal::<Option<String>>(None);
 
-  create_effect(move |_| {
-    logging::log!("name: {}", name());
+  let email_validated = create_memo(move |_| match email() {
+    None => None,
+    Some(email) => crate::helpers::validate_email(email),
+  });
+
+  let confirm_validated = create_memo(move |_| match (password(), confirm()) {
+    (Some(password), Some(confirm)) => {
+      if password != confirm {
+        return Some("Passwords must match.");
+      } else {
+        None
+      }
+    }
+    _ => None,
   });
 
   view! {
     <div class="flex-1 flex flex-col p-8 gap-4 justify-center items-center">
-      <div class="card card-border">
+      <div class="card border border-border">
         <div class="card-body gap-4">
 
           <div class="card-header">
@@ -30,9 +42,9 @@ pub fn SignupPage() -> impl IntoView {
                 placeholder="Type here"
                 class="input max-w-full"
                 on:input=move |ev| {
-                  set_name(event_target_value(&ev));
+                  set_name(Some(event_target_value(&ev)));
                 }
-                prop:value=name
+                prop:value=move || name().unwrap_or_default()
               />
             </div>
 
@@ -43,13 +55,15 @@ pub fn SignupPage() -> impl IntoView {
                 placeholder="Type here"
                 type="email" class="input max-w-full"
                 on:input=move |ev| {
-                  set_email(event_target_value(&ev));
+                  set_email(Some(event_target_value(&ev)));
                 }
-                prop:value=email
+                prop:value=move || email().unwrap_or_default()
               />
-              <label class="form-label">
-                <span class="form-label-alt">"Please enter a valid email."</span>
-              </label>
+              { move || email_validated().map(move |message| view! {
+                <label class="form-label">
+                  <span class="form-label-alt text-red-11">{message}</span>
+                </label>
+              }) }
             </div>
 
             <div class="form-field">
@@ -59,9 +73,9 @@ pub fn SignupPage() -> impl IntoView {
                   placeholder="Type here"
                   type="password" class="input max-w-full"
                   on:input=move |ev| {
-                    set_password(event_target_value(&ev));
+                    set_password(Some(event_target_value(&ev)));
                   }
-                  prop:value=password
+                  prop:value=move || password().unwrap_or_default()
                 />
               </div>
             </div>
@@ -73,11 +87,16 @@ pub fn SignupPage() -> impl IntoView {
                   placeholder="Type here"
                   type="password" class="input max-w-full"
                   on:input=move |ev| {
-                    set_confirm(event_target_value(&ev));
+                    set_confirm(Some(event_target_value(&ev)));
                   }
-                  prop:value=confirm
+                  prop:value=move || confirm().unwrap_or_default()
                 />
               </div>
+              { move || confirm_validated().map(move |message| view! {
+                <label class="form-label">
+                  <span class="form-label-alt text-red-11">{message}</span>
+                </label>
+              }) }
             </div>
 
             <div class="form-field">
