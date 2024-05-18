@@ -116,7 +116,7 @@
           '';
           
           buildPhaseCargoCommand = ''
-            cargo leptos build --release -vvv
+            LEPTOS_HASH_FILES=true cargo leptos build --release -vvv
           '';
 
           installPhaseCommand = ''
@@ -145,9 +145,10 @@
               "LEPTOS_SITE_ROOT=${leptos-options.name}"
               "LEPTOS_SITE_PKG_DIR=${leptos-options.site-pkg-dir}"
               "LEPTOS_SITE_ADDR=0.0.0.0:3000"
-              "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
+              # "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
               "LEPTOS_ENV=PROD"
-              "LEPTOS_HASH_FILES=${builtins.toJSON leptos-options.hash-files}"
+              # "LEPTOS_HASH_FILES=${builtins.toJSON leptos-options.hash-files}"
+              "LEPTOS_HASH_FILES=true"
             ];
           };
         };

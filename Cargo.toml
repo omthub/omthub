@@ -42,8 +42,9 @@ diesel = { version = "2", features = [ "postgres", "r2d2" ] }
 # this name is used for the wasm, js and css file names
 name = "site"
 
-# cache busting for keeping bundles up to date
-hash-files = true
+# we turn this on for the release but keep it off in dev
+# https://github.com/leptos-rs/cargo-leptos/issues/271
+hash-files = false
 
 bin-package = "site-server"
 lib-package = "site-frontend"

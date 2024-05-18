@@ -21,6 +21,7 @@ pub fn App() -> impl IntoView {
       <Router>
         <Routes>
           <Route path="/" view=HomePage />
+          <Route path="/all-translations" view=AllTranslationsPage />
         </Routes>
       </Router>
     </PageWrapper>
@@ -38,18 +39,18 @@ fn get_auth_context() -> core_types::LoggedInUser {
 #[component]
 pub fn NavBar() -> impl IntoView {
   view! {
-    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none">
-      <div class="container mx-auto flex flex-row">
+    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none font-semibold">
+      <div class="container mx-auto h-full flex flex-row">
         <div class="navbar-start">
-          <a class="navbar-item">"OMT Hub"</a>
+          <a class="navbar-item"><span class="text-primary">"OMT"</span>"Hub"</a>
         </div>
         <div class="navbar-end">
-          <a class="navbar-item" href="/">"Home"</a>
-          <a class="navbar-item" href="/all-translations">"All Translations"</a>
+          <a href="/" class="navbar-item">"Home"</a>
+          <a href="/all-translations" class="navbar-item">"All Translations"</a>
         </div>
       </div>
     </div>
-    <div class="h-14 w-full" />
+    <div class="h-14"/>
   }
 }
 
@@ -71,15 +72,26 @@ pub fn HomePage() -> impl IntoView {
 
   view! {
     <div class="flex flex-col justify-center items-start gap-8 h-[36rem]">
-      <p class="text-xl text-content2">"Welcome to OMT-Hub."</p>
+      <p class="text-xl text-content2">"Welcome to "<span class="text-primary">"OMT"</span>"Hub."</p>
       <p class="text-7xl font-bold tracking-tight max-w-3xl">
-        "Hear the Bible spoken in your "
+        "Hear the Bible in your own "
         <span class="text-primary">"mother tongue"</span>
         "."
       </p>
-      <a class="btn btn-rounded btn-lg btn-primary font-semibold" href="/all-translations">
+      <a href="/all-translations" class="btn btn-lg btn-primary">
         "Get Started Now"
       </a>
+    </div>
+  }
+}
+
+#[component]
+pub fn AllTranslationsPage() -> impl IntoView {
+  view! {
+    <div class="flex flex-col p-8 gap-4">
+      <p class="text-5xl tracking-tight font-semibold">
+        "All Translations"
+      </p>
     </div>
   }
 }
