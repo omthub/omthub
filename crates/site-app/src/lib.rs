@@ -57,9 +57,9 @@ pub fn NavBar() -> impl IntoView {
 #[component]
 pub fn PageWrapper(children: Children) -> impl IntoView {
   view! {
-    <div class="flex flex-col min-h-dvh">
+    <div class="min-h-dvh flex flex-col">
       <NavBar/>
-      <div class="container mx-auto flex-1">
+      <div class="container mx-auto flex-1 flex flex-col gap-8 py-8">
         { children() }
       </div>
     </div>
