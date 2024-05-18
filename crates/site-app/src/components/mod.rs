@@ -2,16 +2,26 @@ use leptos::*;
 
 #[component]
 pub fn NavBar() -> impl IntoView {
+  let user = crate::helpers::get_auth_context();
+
   view! {
-    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none font-semibold">
+    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none">
       <div class="container mx-auto h-full flex flex-row">
         <div class="navbar-start">
-          <a class="navbar-item"><OmtHub/></a>
-        </div>
-        <div class="navbar-end">
+          <a href="/" class="navbar-item font-semibold"><OmtHub/></a>
           <a href="/" class="navbar-item">"Home"</a>
           <a href="/all-translations" class="navbar-item">"All Translations"</a>
-          <a href="/auth/signup" class="navbar-item">"Sign Up"</a>
+        </div>
+        <div class="navbar-end">
+          { match user.0 {
+            Some(user) => view! {
+              <p class="navbar-item">{ user.name }</p>
+            }.into_view(),
+            None => view! {
+              <a href="/auth/signup" class="navbar-item">"Sign Up"</a>
+              <a href="/auth/login" class="navbar-item">"Log In"</a>
+            }.into_view(),
+          }}
         </div>
       </div>
     </div>
