@@ -6,7 +6,7 @@ pub fn NavBar() -> impl IntoView {
     <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none font-semibold">
       <div class="container mx-auto h-full flex flex-row">
         <div class="navbar-start">
-          <a href="/" class="navbar-item"><span class="text-primary">"OMT"</span>"Hub"</a>
+          <a class="navbar-item"><OmtHub/></a>
         </div>
         <div class="navbar-end">
           <a href="/" class="navbar-item">"Home"</a>
@@ -28,5 +28,12 @@ pub fn PageWrapper(children: Children) -> impl IntoView {
         { children() }
       </div>
     </div>
+  }
+}
+
+#[component]
+pub fn OmtHub() -> impl IntoView {
+  view! {
+    <span><span class="text-blue-11">"OMT"</span>"Hub"</span>
   }
 }
