@@ -176,22 +176,43 @@ impl AuthnBackend for Backend {
 pub type AuthSession = axum_login::AuthSession<Backend>;
 
 /// Builds an authentication layer for use with an Axum router.
-pub async fn build_auth_layer(
-) -> Result<AuthManagerLayer<Backend, tower_sessions_sqlx_store::PostgresStore>>
-{
+pub async fn build_auth_layer() -> Result<
+  AuthManagerLayer<
+    Backend,
+    tower_sessions::CachingSessionStore<
+      tower_sessions::MemoryStore,
+      tower_sessions_sqlx_store::PostgresStore,
+    >,
+  >,
+> {
   tracing::info!("starting auth layer");
   tracing::debug!("starting new connection to db with sqlx...");
   let pool = sqlx::PgPool::connect(&clients::db_url()?)
     .await
     .wrap_err("failed to connect to db")?;
   tracing::debug!("connected to db with sqlx");
-  let session_store = tower_sessions_sqlx_store::PostgresStore::new(pool);
+  let session_store = tower_sessions_sqlx_store::PostgresStore::new(pool)
+    .with_schema_name("public")
+    .map_err(eyre::Report::msg)
+    .wrap_err("failed to set session store schema name")?
+    .with_table_name("sessions")
+    .map_err(eyre::Report::msg)
+    .wrap_err("failed to set session store table name")?;
 
   tokio::task::spawn(
     session_store
       .clone()
-      .continuously_delete_expired(tokio::time::Duration::from_secs(60)),
+      .continuously_delete_expired(tokio::time::Duration::from_secs(300)),
   );
+
+  let memory_store = tower_sessions::MemoryStore::default();
+  let session_store =
+    tower_sessions::CachingSessionStore::new(memory_store, session_store);
+
+  // session_store
+  //   .migrate()
+  //   .await
+  //   .wrap_err("failed to perform db migration for auth backend")?;
 
   let session_manager_layer =
     tower_sessions::SessionManagerLayer::new(session_store).with_expiry(

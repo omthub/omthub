@@ -2650,11 +2650,15 @@ dependencies = [
 name = "site-app"
 version = "0.1.0"
 dependencies = [
+ "auth",
  "core_types",
  "leptos",
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
+ "serde",
+ "time",
+ "tower-sessions",
 ]
 
 [[package]]

@@ -15,7 +15,17 @@ module.exports = {
       'xl': '1280px',
       // '2xl': '1536px',
     },
-    extend: {},
+    extend: {
+      keyframes: {
+        "slide-down": {
+          '0%': { transform: 'translateY(-100%)', opacity: '0%' },
+          '100%': { transform: 'translateY()', opacity: '100%' },
+        }
+      },
+      animation: {
+        "slide-down": 'slide-down 0.1s ease-out',
+      },
+    },
   },
   plugins: [
     require("rippleui"),

@@ -1,23 +1,7 @@
-use leptos::*;
+mod navbar;
 
-#[component]
-pub fn NavBar() -> impl IntoView {
-  view! {
-    <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none font-semibold">
-      <div class="container mx-auto h-full flex flex-row">
-        <div class="navbar-start">
-          <a class="navbar-item"><OmtHub/></a>
-        </div>
-        <div class="navbar-end">
-          <a href="/" class="navbar-item">"Home"</a>
-          <a href="/all-translations" class="navbar-item">"All Translations"</a>
-          <a href="/auth/signup" class="navbar-item">"Sign Up"</a>
-        </div>
-      </div>
-    </div>
-    <div class="h-14"/>
-  }
-}
+use leptos::*;
+pub use navbar::*;
 
 #[component]
 pub fn PageWrapper(children: Children) -> impl IntoView {

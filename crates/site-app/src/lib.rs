@@ -16,10 +16,11 @@ pub fn App() -> impl IntoView {
     <Style>{include_str!("../style/fonts.css")}</Style>
     <Link rel="preload" href="/fonts/inter.ttf" as_="font" type_="font/ttf" crossorigin="anonymous" />
 
-    <Title text="A template app"/>
+    <Title text="OMTHub"/>
     <Html lang="en" />
     <Meta charset="utf-8"/>
     <Meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <Meta name="description" content="A hub for Oral Mother Tongue translations of the bible"/>
 
     <crate::components::PageWrapper>
       <Router>
@@ -27,6 +28,7 @@ pub fn App() -> impl IntoView {
           <Route path="/" view=crate::pages::homepage::HomePage />
           <Route path="/all-translations" view=crate::pages::all_translations::AllTranslationsPage />
           <Route path="/auth/signup" view=crate::pages::signup::SignupPage />
+          <Route path="/account" view=crate::pages::account::AccountPage />
         </Routes>
       </Router>
     </crate::components::PageWrapper>
