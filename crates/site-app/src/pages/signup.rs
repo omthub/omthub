@@ -11,7 +11,7 @@ pub fn SignupPage() -> impl IntoView {
   let (confirm, set_confirm) = create_signal::<Option<String>>(None);
   let (remember, set_remember) = create_signal(true);
 
-  let name_validated = create_memo(move |_| match email() {
+  let name_validated = create_memo(move |_| match name() {
     None => None,
     Some(name) => crate::helpers::validate_name(name),
   });
@@ -101,7 +101,7 @@ pub fn SignupPage() -> impl IntoView {
                 prop:value=move || name().unwrap_or_default()
               />
               { move || name_validated().map(move |message| view! {
-                <label class="form-label">
+                <label class="form-label animate-slide-down">
                   <span class="form-label-alt text-red-11">{message}</span>
                 </label>
               }) }
@@ -119,7 +119,7 @@ pub fn SignupPage() -> impl IntoView {
                 prop:value=move || email().unwrap_or_default()
               />
               { move || email_validated().map(move |message| view! {
-                <label class="form-label">
+                <label class="form-label animate-slide-down">
                   <span class="form-label-alt text-red-11">{message}</span>
                 </label>
               }) }
@@ -136,7 +136,7 @@ pub fn SignupPage() -> impl IntoView {
                 prop:value=move || password().unwrap_or_default()
               />
               { move || password_validated().map(move |message| view! {
-                <label class="form-label">
+                <label class="form-label animate-slide-down">
                   <span class="form-label-alt text-red-11">{message}</span>
                 </label>
               }) }
@@ -153,7 +153,7 @@ pub fn SignupPage() -> impl IntoView {
                 prop:value=move || confirm().unwrap_or_default()
               />
               { move || confirm_validated().map(move |message| view! {
-                <label class="form-label">
+                <label class="form-label animate-slide-down">
                   <span class="form-label-alt text-red-11">{message}</span>
                 </label>
               }) }
