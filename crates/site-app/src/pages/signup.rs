@@ -26,15 +26,14 @@ pub fn SignupPage() -> impl IntoView {
     Some(password) => crate::helpers::validate_password(password),
   });
 
-  let confirm_validated = create_memo(move |_| match (password(), confirm()) {
-    (Some(password), Some(confirm)) => {
-      if password != confirm {
-        return Some("Passwords must match.");
-      } else {
-        None
-      }
+  let confirm_validated = create_memo(move |_| {
+    match (password(), confirm()) {
+      (Some(password), Some(confirm)) => password != confirm,
+      (Some(_), None) => true,
+      (None, Some(_)) => true,
+      (None, None) => false,
     }
-    _ => None,
+    .then_some("Passwords must match.")
   });
 
   let params = create_memo(move |_| match (name(), email(), password()) {
