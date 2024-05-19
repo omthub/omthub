@@ -7,15 +7,25 @@ pub fn get_auth_context() -> core_types::LoggedInUser {
   )
 }
 
+pub fn validate_name(name: String) -> Option<String> {
+  if name.len() < 3 {
+    return Some("Name must be at least 3 characters long.".to_string());
+  }
+
+  None
+}
+
 pub fn validate_email(email: String) -> Option<String> {
   if email.is_empty() {
-    return Some("An email is required.".into());
+    return Some("An email is required.".to_string());
   }
 
   // Split the email into local and domain parts
   let parts: Vec<&str> = email.split('@').collect();
   if parts.len() != 2 {
-    return Some("Your email must contain exactly one \"@\" symbol.".into());
+    return Some(
+      "Your email must contain exactly one \"@\" symbol.".to_string(),
+    );
   }
 
   let local = parts[0];
@@ -23,7 +33,7 @@ pub fn validate_email(email: String) -> Option<String> {
 
   // Check local part
   if local.is_empty() {
-    return Some("The first part of the email is empty.".into());
+    return Some("The first part of the email is empty.".to_string());
   }
 
   if local.len() > 64 {
@@ -87,6 +97,36 @@ pub fn validate_email(email: String) -> Option<String> {
     if label.ends_with('-') {
       return Some("One of the domain labels ends with a hyphen.".to_string());
     }
+  }
+
+  None
+}
+
+pub fn validate_password(password: String) -> Option<String> {
+  let min_length = 8;
+  if password.len() < min_length {
+    return Some(format!(
+      "Password must be at least {} characters long.",
+      min_length
+    ));
+  }
+  if !password.chars().any(|c| c.is_uppercase()) {
+    return Some(
+      "Password must contain at least one uppercase letter.".to_string(),
+    );
+  }
+  if !password.chars().any(|c| c.is_lowercase()) {
+    return Some(
+      "Password must contain at least one lowercase letter.".to_string(),
+    );
+  }
+  if !password.chars().any(|c| c.is_digit(10)) {
+    return Some("Password must contain at least one digit.".to_string());
+  }
+  if !password.chars().any(|c| !c.is_alphanumeric()) {
+    return Some(
+      "Password must contain at least one special character.".to_string(),
+    );
   }
 
   None

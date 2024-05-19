@@ -11,9 +11,19 @@ pub fn SignupPage() -> impl IntoView {
   let (confirm, set_confirm) = create_signal::<Option<String>>(None);
   let (remember, set_remember) = create_signal(true);
 
+  let name_validated = create_memo(move |_| match email() {
+    None => None,
+    Some(name) => crate::helpers::validate_name(name),
+  });
+
   let email_validated = create_memo(move |_| match email() {
     None => None,
     Some(email) => crate::helpers::validate_email(email),
+  });
+
+  let password_validated = create_memo(move |_| match password() {
+    None => None,
+    Some(password) => crate::helpers::validate_password(password),
   });
 
   let confirm_validated = create_memo(move |_| match (password(), confirm()) {
@@ -90,6 +100,11 @@ pub fn SignupPage() -> impl IntoView {
                 }
                 prop:value=move || name().unwrap_or_default()
               />
+              { move || name_validated().map(move |message| view! {
+                <label class="form-label">
+                  <span class="form-label-alt text-red-11">{message}</span>
+                </label>
+              }) }
             </div>
 
             <div class="form-field">
@@ -112,30 +127,31 @@ pub fn SignupPage() -> impl IntoView {
 
             <div class="form-field">
               <label class="form-label">"Password"</label>
-              <div class="form-control">
-                <input
-                  placeholder="Type here"
-                  type="password" class="input hover:input-primary focus:input-primary transition max-w-full"
-                  on:input=move |ev| {
-                    set_password(Some(event_target_value(&ev)));
-                  }
-                  prop:value=move || password().unwrap_or_default()
-                />
-              </div>
+              <input
+                placeholder="Type here"
+                type="password" class="input hover:input-primary focus:input-primary transition max-w-full"
+                on:input=move |ev| {
+                  set_password(Some(event_target_value(&ev)));
+                }
+                prop:value=move || password().unwrap_or_default()
+              />
+              { move || password_validated().map(move |message| view! {
+                <label class="form-label">
+                  <span class="form-label-alt text-red-11">{message}</span>
+                </label>
+              }) }
             </div>
 
             <div class="form-field">
               <label class="form-label">"Confirm password"</label>
-              <div class="form-control">
-                <input
-                  placeholder="Type here"
-                  type="password" class="input hover:input-primary focus:input-primary transition max-w-full"
-                  on:input=move |ev| {
-                    set_confirm(Some(event_target_value(&ev)));
-                  }
-                  prop:value=move || confirm().unwrap_or_default()
-                />
-              </div>
+              <input
+                placeholder="Type here"
+                type="password" class="input hover:input-primary focus:input-primary transition max-w-full"
+                on:input=move |ev| {
+                  set_confirm(Some(event_target_value(&ev)));
+                }
+                prop:value=move || confirm().unwrap_or_default()
+              />
               { move || confirm_validated().map(move |message| view! {
                 <label class="form-label">
                   <span class="form-label-alt text-red-11">{message}</span>
