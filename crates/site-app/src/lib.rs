@@ -23,7 +23,7 @@ pub fn App() -> impl IntoView {
     <Meta name="description" content="A hub for Oral Mother Tongue translations of the bible"/>
 
     <crate::components::PageWrapper>
-      <Router>
+      <Router trailing_slash=leptos_router::TrailingSlash::Redirect>
         <Routes>
           <Route path="/" view=crate::pages::homepage::HomePage />
           <Route path="/all-translations" view=crate::pages::all_translations::AllTranslationsPage />
