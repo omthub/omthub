@@ -1,5 +1,7 @@
 use leptos::*;
 
+use crate::components::logout::LogoutButton;
+
 #[component]
 pub fn NavBar() -> impl IntoView {
   let user = crate::helpers::get_auth_context();
@@ -32,17 +34,17 @@ pub fn NavBar() -> impl IntoView {
 #[component]
 pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
   view! {
-    <div class="dropdown dropdown-hover">
-      <label class="navbar-item block h-10">{ user.name }</label>
+    <div class="dropdown">
+      <label class="btn btn-rounded" tabindex="0">{ user.name }</label>
       <div class="dropdown-menu dropdown-menu-bottom-left border border-border">
         <a href="/account" class="dropdown-item flex flex-row gap-2 items-center">
           <HeroIconsUserCircle />
           <p class="text-sm">"Account"</p>
         </a>
-        <a tabindex="-1" class="dropdown-item flex flex-row gap-2 items-center">
-          <HeroIconsArrowLeftStartOnRectangle />
-          <p class="text-sm">"Log out"</p>
-        </a>
+        <LogoutButton class="dropdown-item flex flex-row gap-2 items-center".into()>
+            <HeroIconsArrowLeftStartOnRectangle />
+            <p class="text-sm">"Log out"</p>
+        </LogoutButton>
       </div>
     </div>
   }

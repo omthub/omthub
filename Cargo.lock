@@ -2659,6 +2659,7 @@ dependencies = [
  "serde",
  "time",
  "tower-sessions",
+ "web-sys",
 ]
 
 [[package]]
