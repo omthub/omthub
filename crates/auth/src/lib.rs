@@ -8,7 +8,7 @@ use clients::diesel::prelude::*;
 use eyre::{eyre, Context, OptionExt, Result};
 use serde::{Deserialize, Serialize};
 use tower_sessions::ExpiredDeletion;
-use tracing::{instrument, Instrument};
+use tracing::instrument;
 
 /// The credentials type for the authentication layer.
 ///

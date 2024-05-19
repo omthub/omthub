@@ -57,7 +57,7 @@ pub fn SignupPage() -> impl IntoView {
   });
 
   let signup_action = create_server_action::<Signup>();
-  let value = signup_action.value();
+  let _value = signup_action.value();
   let pending = signup_action.pending();
 
   let dispatch = move |_| match params() {
