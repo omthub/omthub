@@ -110,24 +110,24 @@ pub fn validate_password(password: String) -> Option<String> {
       min_length
     ));
   }
-  if !password.chars().any(|c| c.is_uppercase()) {
-    return Some(
-      "Password must contain at least one uppercase letter.".to_string(),
-    );
-  }
-  if !password.chars().any(|c| c.is_lowercase()) {
-    return Some(
-      "Password must contain at least one lowercase letter.".to_string(),
-    );
-  }
-  if !password.chars().any(|c| c.is_digit(10)) {
-    return Some("Password must contain at least one digit.".to_string());
-  }
-  if !password.chars().any(|c| !c.is_alphanumeric()) {
-    return Some(
-      "Password must contain at least one special character.".to_string(),
-    );
-  }
+  // if !password.chars().any(|c| c.is_uppercase()) {
+  //   return Some(
+  //     "Password must contain at least one uppercase letter.".to_string(),
+  //   );
+  // }
+  // if !password.chars().any(|c| c.is_lowercase()) {
+  //   return Some(
+  //     "Password must contain at least one lowercase letter.".to_string(),
+  //   );
+  // }
+  // if !password.chars().any(|c| c.is_digit(10)) {
+  //   return Some("Password must contain at least one digit.".to_string());
+  // }
+  // if !password.chars().any(|c| !c.is_alphanumeric()) {
+  //   return Some(
+  //     "Password must contain at least one special character.".to_string(),
+  //   );
+  // }
 
   None
 }
