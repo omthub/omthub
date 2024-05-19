@@ -147,8 +147,9 @@ pub fn SignupPage() -> impl IntoView {
             <div class="form-field pt-5">
               <div class="form-control justify-between">
                 <button
-                  type="button" class="btn btn-primary w-full"
-                  on:click=dispatch
+                  type="button" on:click=dispatch
+                  class={ move || format!("btn btn-primary w-full {}", if pending() { "btn-loading" } else { "" }) }
+                  disabled=pending
                 >"Sign Up"</button>
               </div>
             </div>
