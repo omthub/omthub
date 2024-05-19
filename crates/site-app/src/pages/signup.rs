@@ -51,10 +51,22 @@ pub fn SignupPage() -> impl IntoView {
   let value = signup_action.value();
   let pending = signup_action.pending();
 
-  let dispatch = move |_| {
-    signup_action.dispatch(Signup {
-      params: params().unwrap(),
-    });
+  let dispatch = move |_| match params() {
+    Some(params) => signup_action.dispatch(Signup { params }),
+    None => {
+      if name().is_none() {
+        set_name(Some(String::new()))
+      }
+      if email().is_none() {
+        set_email(Some(String::new()))
+      }
+      if password().is_none() {
+        set_password(Some(String::new()))
+      }
+      if confirm().is_none() {
+        set_confirm(Some(String::new()))
+      }
+    }
   };
 
   view! {
