@@ -40,7 +40,7 @@ fn hash_password(password: &str) -> Result<String> {
     .wrap_err("failed to hash password")?
     .to_string();
 
-  return Ok(password_hash);
+  Ok(password_hash)
 }
 
 fn verify_password(pw_hash: &str, password: &str) -> Result<bool> {
@@ -49,7 +49,7 @@ fn verify_password(pw_hash: &str, password: &str) -> Result<bool> {
     Argon2,
   };
 
-  let parsed_hash = PasswordHash::new(&pw_hash)
+  let parsed_hash = PasswordHash::new(pw_hash)
     .map_err(|e| eyre::eyre!(e))
     .wrap_err("failed to parse password hash")?;
 
