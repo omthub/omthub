@@ -36,7 +36,11 @@ pub fn NavBar() -> impl IntoView {
 #[island]
 pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
   let logout_action = create_server_action::<Logout>();
+  let logout_pending = logout_action.pending();
   let logout_value = logout_action.value();
+
+  let show_loading =
+    move || logout_pending() || matches!(logout_value(), Some(Ok(())));
 
   create_effect(move |_| {
     if matches!(logout_value(), Some(Ok(_))) {
@@ -58,6 +62,10 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
         >
           <HeroIconsArrowLeftStartOnRectangle />
           <p class="text-sm">"Log out"</p>
+          <div class="flex-1" />
+          { move || show_loading().then_some(view! {
+            <div class="spinner-circle spinner-xs" style="--spinner-color: var(--content1);" />
+          }) }
         </button>
       </div>
     </div>
