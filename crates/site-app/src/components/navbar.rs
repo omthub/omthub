@@ -1,4 +1,8 @@
+#![allow(unused)]
+
 use leptos::*;
+
+use crate::components::logout::Logout;
 
 #[component]
 pub fn NavBar() -> impl IntoView {
@@ -29,20 +33,32 @@ pub fn NavBar() -> impl IntoView {
   }
 }
 
-#[component]
+#[island]
 pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
+  let logout_action = create_server_action::<Logout>();
+  let logout_value = logout_action.value();
+
+  create_effect(move |_| {
+    if matches!(logout_value(), Some(Ok(_))) {
+      crate::helpers::navigation::reload();
+    }
+  });
+
   view! {
-    <div class="dropdown dropdown-hover">
-      <label class="navbar-item block h-10">{ user.name }</label>
+    <div class="dropdown">
+      <label class="btn btn-rounded" tabindex="0">{ user.name }</label>
       <div class="dropdown-menu dropdown-menu-bottom-left border border-border">
         <a href="/account" class="dropdown-item flex flex-row gap-2 items-center">
           <HeroIconsUserCircle />
           <p class="text-sm">"Account"</p>
         </a>
-        <a tabindex="-1" class="dropdown-item flex flex-row gap-2 items-center">
+        <button
+          class="dropdown-item flex flex-row gap-2 items-center"
+          on:click=move |_| { logout_action.dispatch(Logout {}); }
+        >
           <HeroIconsArrowLeftStartOnRectangle />
           <p class="text-sm">"Log out"</p>
-        </a>
+        </button>
       </div>
     </div>
   }

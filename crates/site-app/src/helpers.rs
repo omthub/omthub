@@ -1,3 +1,5 @@
+pub mod navigation;
+
 use leptos::*;
 
 pub fn get_auth_context() -> core_types::LoggedInUser {

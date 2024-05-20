@@ -19,9 +19,13 @@ auth = { path = "../auth", optional = true }
 tower-sessions = { workspace = true, optional = true }
 time = { workspace = true, optional = true }
 
+web-sys.workspace = true
+
 [features]
 default = []
-hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
+hydrate = [
+  "leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate",
+]
 ssr = [
   "leptos/ssr", "leptos/tracing", "leptos_meta/ssr", "leptos_router/ssr",
   "dep:leptos_axum", "core_types/ssr", "dep:auth", "dep:tower-sessions",

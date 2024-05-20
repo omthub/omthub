@@ -1,3 +1,4 @@
+mod logout;
 mod navbar;
 
 use leptos::*;

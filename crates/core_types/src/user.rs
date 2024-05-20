@@ -2,6 +2,7 @@ use std::fmt::Debug;
 
 #[cfg(feature = "ssr")]
 use diesel::prelude::*;
+use serde::{Deserialize, Serialize};
 
 use crate::meta::Meta;
 
@@ -35,7 +36,7 @@ impl Debug for User {
   }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PublicUser {
   pub id:        ulid::Ulid,
   pub name:      String,
