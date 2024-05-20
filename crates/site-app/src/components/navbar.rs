@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use leptos::*;
 
 use crate::components::logout::Logout;
