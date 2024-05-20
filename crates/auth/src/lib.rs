@@ -24,6 +24,42 @@ pub struct Credentials {
   pub remember: bool,
 }
 
+/// Takes in a password and produces a PHC string ($argon2id$v=19$...)
+fn hash_password(password: &str) -> Result<String> {
+  use argon2::{
+    password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
+    Argon2,
+  };
+
+  let salt = SaltString::generate(&mut OsRng);
+  let argon2 = Argon2::default();
+
+  let password_hash = argon2
+    .hash_password(password.as_bytes(), &salt)
+    .map_err(|e| eyre::eyre!(e))
+    .wrap_err("failed to hash password")?
+    .to_string();
+
+  return Ok(password_hash);
+}
+
+fn verify_password(pw_hash: &str, password: &str) -> Result<bool> {
+  use argon2::{
+    password_hash::{PasswordHash, PasswordVerifier},
+    Argon2,
+  };
+
+  let parsed_hash = PasswordHash::new(&pw_hash)
+    .map_err(|e| eyre::eyre!(e))
+    .wrap_err("failed to parse password hash")?;
+
+  Ok(
+    Argon2::default()
+      .verify_password(password.as_bytes(), &parsed_hash)
+      .is_ok(),
+  )
+}
+
 /// The backend type for the authentication layer.
 ///
 /// This type implements the [`AuthnBackend`] trait for the picturepro types,
@@ -73,7 +109,7 @@ impl Backend {
       id: core_types::Ulid::new(),
       name,
       email,
-      pw_hash: password,
+      pw_hash: hash_password(&password)?,
       meta: core_types::Meta::new(),
       is_active: true,
     };
@@ -128,7 +164,9 @@ impl AuthnBackend for Backend {
 
     let users = users
       .into_iter()
-      .filter(|u| u.pw_hash == credentials.password)
+      .filter(|u| {
+        verify_password(&u.pw_hash, &credentials.password).is_ok_and(|v| v)
+      })
       .collect::<Vec<_>>();
 
     match users.len() {
