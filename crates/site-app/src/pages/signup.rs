@@ -97,11 +97,10 @@ pub fn SignupPage() -> impl IntoView {
     });
 
   // redirect effect
-  create_effect(move |_| match dispatch_state() {
-    DispatchState::Success => {
+  create_effect(move |_| {
+    if dispatch_state() == DispatchState::Success {
       navigate_to("/account");
     }
-    _ => (),
   });
 
   let dispatch_button_styles = move || {
@@ -113,10 +112,8 @@ pub fn SignupPage() -> impl IntoView {
       DispatchState::InternalError => "btn-outline",
     })
   };
-  let dispatch_button_disabled = move || match dispatch_state() {
-    DispatchState::Pending => true,
-    _ => false,
-  };
+  let dispatch_button_disabled =
+    move || matches!(dispatch_state(), DispatchState::Pending);
 
   view! {
     <div class="flex-1 flex flex-col p-8 gap-4 justify-center items-center">
