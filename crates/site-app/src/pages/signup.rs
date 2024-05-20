@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{components::*, helpers::navigation::navigate_to};
 
+#[derive(Clone, PartialEq)]
 pub enum DispatchState {
   InsufficientInformation,
   Unsubmitted,
@@ -86,13 +87,14 @@ pub fn SignupPage() -> impl IntoView {
     }
   };
 
-  let dispatch_state = move || match (params(), pending(), value()) {
-    (None, _, _) => DispatchState::InsufficientInformation,
-    (Some(_), true, _) => DispatchState::Pending,
-    (Some(_), false, None) => DispatchState::Unsubmitted,
-    (Some(_), false, Some(Ok(()))) => DispatchState::Success,
-    (Some(_), false, Some(Err(_))) => DispatchState::InternalError,
-  };
+  let dispatch_state =
+    create_memo(move |_| match (params(), pending(), value()) {
+      (None, _, _) => DispatchState::InsufficientInformation,
+      (Some(_), true, _) => DispatchState::Pending,
+      (Some(_), false, None) => DispatchState::Unsubmitted,
+      (Some(_), false, Some(Ok(()))) => DispatchState::Success,
+      (Some(_), false, Some(Err(_))) => DispatchState::InternalError,
+    });
 
   // redirect effect
   create_effect(move |_| match dispatch_state() {

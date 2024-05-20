@@ -1,6 +1,7 @@
 use leptos::*;
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, PartialEq)]
 pub enum DispatchState {
   InsufficientInformation,
   Unsubmitted,
@@ -63,14 +64,15 @@ pub fn LoginPage() -> impl IntoView {
     }
   };
 
-  let dispatch_state = move || match (params(), pending(), value()) {
-    (None, _, _) => DispatchState::InsufficientInformation,
-    (Some(_), true, _) => DispatchState::Pending,
-    (Some(_), false, None) => DispatchState::Unsubmitted,
-    (Some(_), false, Some(Ok(true))) => DispatchState::Success,
-    (Some(_), false, Some(Ok(false))) => DispatchState::BadCredentials,
-    (Some(_), false, Some(Err(_))) => DispatchState::InternalError,
-  };
+  let dispatch_state =
+    create_memo(move |_| match (params(), pending(), value()) {
+      (None, _, _) => DispatchState::InsufficientInformation,
+      (Some(_), true, _) => DispatchState::Pending,
+      (Some(_), false, None) => DispatchState::Unsubmitted,
+      (Some(_), false, Some(Ok(true))) => DispatchState::Success,
+      (Some(_), false, Some(Ok(false))) => DispatchState::BadCredentials,
+      (Some(_), false, Some(Err(_))) => DispatchState::InternalError,
+    });
 
   // redirect effect
   create_effect(move |_| match dispatch_state() {
