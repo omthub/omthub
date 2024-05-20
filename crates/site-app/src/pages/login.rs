@@ -1,7 +1,16 @@
 use leptos::*;
 use serde::{Deserialize, Serialize};
 
-use crate::components::*;
+pub enum DispatchState {
+  InsufficientInformation,
+  Unsubmitted,
+  Pending,
+  Success,
+  BadCredentials,
+  InternalError,
+}
+
+use crate::{components::*, helpers::navigation::navigate_to};
 
 #[island]
 pub fn LoginPage() -> impl IntoView {
@@ -39,7 +48,7 @@ pub fn LoginPage() -> impl IntoView {
   });
 
   let login_action = create_server_action::<Login>();
-  let _value = login_action.value();
+  let value = login_action.value();
   let pending = login_action.pending();
 
   let dispatch = move |_| match params() {
@@ -54,16 +63,36 @@ pub fn LoginPage() -> impl IntoView {
     }
   };
 
+  let dispatch_state = move || match (params(), pending(), value()) {
+    (None, _, _) => DispatchState::InsufficientInformation,
+    (Some(_), true, _) => DispatchState::Pending,
+    (Some(_), false, None) => DispatchState::Unsubmitted,
+    (Some(_), false, Some(Ok(true))) => DispatchState::Success,
+    (Some(_), false, Some(Ok(false))) => DispatchState::BadCredentials,
+    (Some(_), false, Some(Err(_))) => DispatchState::InternalError,
+  };
+
+  // redirect effect
+  create_effect(move |_| match dispatch_state() {
+    DispatchState::Success => {
+      navigate_to("/account");
+    }
+    _ => (),
+  });
+
   let dispatch_button_styles = move || {
-    format!(
-      "btn w-full transition {} {}",
-      if params().is_some() {
-        "btn-primary"
-      } else {
-        "btn-outline"
-      },
-      if pending() { "btn-loading" } else { "" }
-    )
+    format!("btn w-full transition {}", match dispatch_state() {
+      DispatchState::InsufficientInformation => "btn-outline",
+      DispatchState::Unsubmitted => "btn-primary",
+      DispatchState::Pending => "btn-outline btn-loading",
+      DispatchState::Success => "btn-outline",
+      DispatchState::BadCredentials => "btn-outline",
+      DispatchState::InternalError => "btn-outline",
+    })
+  };
+  let dispatch_button_disabled = move || match dispatch_state() {
+    DispatchState::Pending => true,
+    _ => false,
   };
 
   view! {
@@ -72,7 +101,7 @@ pub fn LoginPage() -> impl IntoView {
         <div class="card-body gap-4">
 
           <div class="card-header">
-            <p>"Sign up for "<OmtHub/></p>
+            <p>"Login to "<OmtHub/></p>
           </div>
 
           <div class="form-group gap-4">
@@ -130,9 +159,35 @@ pub fn LoginPage() -> impl IntoView {
                 <button
                   type="button" on:click=dispatch
                   class=dispatch_button_styles
-                  disabled=pending
-                >"Sign Up"</button>
+                  disabled=dispatch_button_disabled
+                >"Login"</button>
               </div>
+              { move || {
+                match dispatch_state() {
+                  DispatchState::Success => Some(view! {
+                    <label class="form-label animate-slide-down">
+                      <span class="form-label-alt text-green-11">
+                        "Logged in successfully! Redirecting..."
+                      </span>
+                    </label>
+                  }),
+                  DispatchState::BadCredentials => Some(view! {
+                    <label class="form-label animate-slide-down">
+                      <span class="form-label-alt text-red-11">
+                        "Wrong username or password. Please try again."
+                      </span>
+                    </label>
+                  }),
+                  DispatchState::InternalError => Some(view! {
+                    <label class="form-label animate-slide-down">
+                      <span class="form-label-alt text-red-11">
+                        "Something went wrong. Please try again."
+                      </span>
+                    </label>
+                  }),
+                  _ => None
+                }
+              }}
             </div>
 
             <div class="form-field">

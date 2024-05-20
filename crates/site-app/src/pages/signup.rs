@@ -1,7 +1,15 @@
 use leptos::*;
 use serde::{Deserialize, Serialize};
 
-use crate::components::*;
+use crate::{components::*, helpers::navigation::navigate_to};
+
+pub enum DispatchState {
+  InsufficientInformation,
+  Unsubmitted,
+  Pending,
+  Success,
+  InternalError,
+}
 
 #[island]
 pub fn SignupPage() -> impl IntoView {
@@ -57,7 +65,7 @@ pub fn SignupPage() -> impl IntoView {
   });
 
   let signup_action = create_server_action::<Signup>();
-  let _value = signup_action.value();
+  let value = signup_action.value();
   let pending = signup_action.pending();
 
   let dispatch = move |_| match params() {
@@ -78,16 +86,34 @@ pub fn SignupPage() -> impl IntoView {
     }
   };
 
+  let dispatch_state = move || match (params(), pending(), value()) {
+    (None, _, _) => DispatchState::InsufficientInformation,
+    (Some(_), true, _) => DispatchState::Pending,
+    (Some(_), false, None) => DispatchState::Unsubmitted,
+    (Some(_), false, Some(Ok(()))) => DispatchState::Success,
+    (Some(_), false, Some(Err(_))) => DispatchState::InternalError,
+  };
+
+  // redirect effect
+  create_effect(move |_| match dispatch_state() {
+    DispatchState::Success => {
+      navigate_to("/account");
+    }
+    _ => (),
+  });
+
   let dispatch_button_styles = move || {
-    format!(
-      "btn w-full transition {} {}",
-      if params().is_some() {
-        "btn-primary"
-      } else {
-        "btn-outline"
-      },
-      if pending() { "btn-loading" } else { "" }
-    )
+    format!("btn w-full transition {}", match dispatch_state() {
+      DispatchState::InsufficientInformation => "btn-outline",
+      DispatchState::Unsubmitted => "btn-primary",
+      DispatchState::Pending => "btn-outline btn-loading",
+      DispatchState::Success => "btn-outline",
+      DispatchState::InternalError => "btn-outline",
+    })
+  };
+  let dispatch_button_disabled = move || match dispatch_state() {
+    DispatchState::Pending => true,
+    _ => false,
   };
 
   view! {
@@ -188,9 +214,28 @@ pub fn SignupPage() -> impl IntoView {
                 <button
                   type="button" on:click=dispatch
                   class=dispatch_button_styles
-                  disabled=pending
+                  disabled=dispatch_button_disabled
                 >"Sign Up"</button>
               </div>
+              { move || {
+                match dispatch_state() {
+                  DispatchState::Success => Some(view! {
+                    <label class="form-label animate-slide-down">
+                      <span class="form-label-alt text-green-11">
+                        "Logged in successfully! Redirecting..."
+                      </span>
+                    </label>
+                  }),
+                  DispatchState::InternalError => Some(view! {
+                    <label class="form-label animate-slide-down">
+                      <span class="form-label-alt text-red-11">
+                        "Something went wrong. Please try again."
+                      </span>
+                    </label>
+                  }),
+                  _ => None
+                }
+              }}
             </div>
 
             <div class="form-field">
