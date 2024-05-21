@@ -203,6 +203,7 @@
 
         packages = {
           default = site-server;
+          deps-only = site-server-deps;
           server = site-server;
           container = site-server-container;
         };
