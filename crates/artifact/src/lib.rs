@@ -3,6 +3,7 @@ use std::sync::Arc;
 use eyre::{Context, Result};
 use object_store::{aws::AmazonS3Builder, ObjectStore};
 
+#[allow(dead_code)]
 pub struct FetchedArtifact {
   db_object: core_types::Artifact,
   blob:      bytes::Bytes,
