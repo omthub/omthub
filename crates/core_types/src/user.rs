@@ -6,8 +6,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::meta::Meta;
 
+#[derive(Clone)]
 #[cfg(feature = "ssr")]
-#[derive(Clone, Queryable, Selectable, Insertable)]
+#[derive(Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct User {
