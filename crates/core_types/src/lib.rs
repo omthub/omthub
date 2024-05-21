@@ -1,7 +1,9 @@
+pub mod artifact;
 pub mod meta;
+pub mod user;
+
 #[cfg(feature = "ssr")]
 pub mod schema;
-pub mod user;
 #[cfg(feature = "ssr")]
 pub mod utils;
 
