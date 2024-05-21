@@ -24,8 +24,8 @@ thiserror = { version = "1" }
 serde = { version = "1", features = [ "derive" ] }
 
 async-trait = { version = "0.1" }
-axum = { version = "0.7.4", features = ["macros", "tracing"] }
-console_error_panic_hook = "0.1.7"
+axum = { version = "0.7", features = ["macros", "tracing"] }
+console_error_panic_hook = "0.1"
 console_log = "1"
 log = "0.4"
 time = { version = "0.3" }
