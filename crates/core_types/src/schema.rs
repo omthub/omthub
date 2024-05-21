@@ -9,6 +9,16 @@ diesel::table! {
 }
 
 diesel::table! {
+    mother_tongue (id) {
+        id -> Text,
+        name -> Text,
+        description -> Text,
+        is_vetted -> Bool,
+        meta -> Text,
+    }
+}
+
+diesel::table! {
     sessions (id) {
         id -> Text,
         data -> Bytea,
@@ -27,4 +37,9 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(artifacts, sessions, users,);
+diesel::allow_tables_to_appear_in_same_query!(
+  artifacts,
+  mother_tongue,
+  sessions,
+  users,
+);
