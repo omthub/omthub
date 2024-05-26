@@ -1,18 +1,16 @@
-#[cfg(feature = "ssr")]
-use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::meta::Meta;
 
-#[derive(Clone, Serialize, Deserialize)]
-#[cfg_attr(feature = "ssr", derive(Queryable, Selectable, Insertable))]
-#[cfg_attr(feature = "ssr", diesel(table_name = crate::schema::artifacts))]
-#[cfg_attr(feature = "ssr", diesel(check_for_backend(diesel::pg::Pg)))]
+pub const ARTIFACT_TABLE: &str = "artifacts";
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "ssr", serde(from = "crate::ssr::UlidOrThing"))]
+pub struct ArtifactRecordId(pub ulid::Ulid);
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Artifact {
-  #[cfg_attr(feature = "ssr", diesel(deserialize_as = crate::utils::UlidWrapper))]
-  #[cfg_attr(feature = "ssr", diesel(serialize_as = String))]
-  pub id:         ulid::Ulid,
+  pub id:         ArtifactRecordId,
   pub object_key: String,
-  #[cfg_attr(feature = "ssr", diesel(serialize_as = String))]
   pub meta:       Meta,
 }

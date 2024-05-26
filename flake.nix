@@ -20,6 +20,9 @@
         overlays = [ (import rust-overlay) ];
         pkgs = (import nixpkgs) {
           inherit system overlays;
+          config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+            "surrealdb"
+          ];
         };
 
         # filter the source to reduce cache misses
@@ -219,6 +222,8 @@
             bacon # cargo check w/ hot reload
             cargo-deny # license checking
             yarn # interacting with style deps
+
+            surrealdb
           ])
             ++ common-args.buildInputs
             ++ common-args.nativeBuildInputs

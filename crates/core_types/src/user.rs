@@ -1,24 +1,23 @@
 use std::fmt::Debug;
 
-#[cfg(feature = "ssr")]
-use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::meta::Meta;
 
+pub const USER_TABLE: &str = "users";
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "ssr", serde(from = "crate::ssr::UlidOrThing"))]
+pub struct UserRecordId(pub ulid::Ulid);
+
 #[cfg(feature = "ssr")]
-#[derive(Clone, Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::users)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct User {
-  #[diesel(deserialize_as = crate::utils::UlidWrapper)]
-  #[diesel(serialize_as = String)]
-  pub id:        ulid::Ulid,
+  pub id:        UserRecordId,
   pub name:      String,
   pub email:     String,
   pub pw_hash:   String,
   pub is_active: bool,
-  #[diesel(serialize_as = String)]
   pub meta:      Meta,
 }
 
@@ -38,7 +37,7 @@ impl Debug for User {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PublicUser {
-  pub id:        ulid::Ulid,
+  pub id:        UserRecordId,
   pub name:      String,
   pub email:     String,
   pub is_active: bool,
@@ -70,7 +69,7 @@ mod auth {
   impl AuthUser for User {
     type Id = ulid::Ulid;
 
-    fn id(&self) -> <Self as AuthUser>::Id { self.id }
+    fn id(&self) -> <Self as AuthUser>::Id { self.id.0 }
     fn session_auth_hash(&self) -> &[u8] { self.pw_hash.as_bytes() }
   }
 }

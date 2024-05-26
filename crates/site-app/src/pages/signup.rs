@@ -295,7 +295,7 @@ pub async fn signup(params: SignupParams) -> Result<(), ServerFnError> {
       ServerFnError::new("Failed to sign up")
     })?;
 
-  let _login_result =
+  let login_result =
     crate::pages::login::login(crate::pages::login::LoginParams {
       email: email.clone(),
       password: password.clone(),
@@ -303,6 +303,10 @@ pub async fn signup(params: SignupParams) -> Result<(), ServerFnError> {
     })
     .await
     .map_err(|e| ServerFnError::new(format!("Failed to log in: {e}")))?;
+
+  if !login_result {
+    return Err(ServerFnError::new("Failed to login after sign up"));
+  }
 
   Ok(())
 }
