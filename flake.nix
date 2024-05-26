@@ -79,9 +79,6 @@
             # used by cargo-leptos for styling
             pkgs.dart-sass
             pkgs.tailwindcss
-
-            # used by diesel
-            pkgs.postgresql
           ] ++ pkgs.lib.optionals (system == "x86_64-linux") [
             pkgs.nasm # wasm compiler only for x86_64-linux
           ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [

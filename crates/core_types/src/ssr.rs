@@ -7,7 +7,8 @@ use surrealdb::{
 };
 
 use crate::{
-  Artifact, ArtifactRecordId, User, UserRecordId, ARTIFACT_TABLE, USER_TABLE,
+  Artifact, ArtifactRecordId, MotherTongue, MotherTongueRecordId, User,
+  UserRecordId, ARTIFACT_TABLE, MOTHER_TONGUE_TABLE, USER_TABLE,
 };
 
 #[derive(Deserialize, Debug, Clone)]
@@ -117,3 +118,4 @@ macro_rules! impl_table {
 
 impl_table!(UserRecordId, User, USER_TABLE);
 impl_table!(ArtifactRecordId, Artifact, ARTIFACT_TABLE);
+impl_table!(MotherTongueRecordId, MotherTongue, MOTHER_TONGUE_TABLE);
