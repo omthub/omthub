@@ -220,7 +220,9 @@
             cargo-deny # license checking
             yarn # interacting with style deps
 
+            # surreal stuff
             surrealdb
+            surrealdb-migrations
           ])
             ++ common-args.buildInputs
             ++ common-args.nativeBuildInputs

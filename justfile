@@ -16,4 +16,5 @@ surreal:
 	mkdir /tmp/surreal_data -p && surreal start file:/tmp/omthub_surreal_data --log=info --auth
 wipe-surreal:
 	rm -rf /tmp/omthub_surreal_data
-
+apply-surreal:
+	surrealdb-migrations apply
