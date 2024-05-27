@@ -24,11 +24,13 @@ use self::fileserv::file_and_error_handler;
 pub struct AppState {
   pub leptos_options: LeptosOptions,
   pub routes:         Vec<RouteListing>,
+  pub db:             db::DbConnection,
 }
 
 async fn server_fn_handler(
   session: tower_sessions::Session,
   auth_session: auth::AuthSession,
+  State(app_state): State<AppState>,
   request: Request<Body>,
 ) -> impl IntoResponse {
   handle_server_fns_with_context(
@@ -38,6 +40,8 @@ async fn server_fn_handler(
       provide_context(core_types::LoggedInUser(
         auth_session.user.clone().map(core_types::PublicUser::from),
       ));
+      provide_context(app_state.db.clone());
+      tracing::warn!("running server fn handler");
     },
     request,
   )
@@ -45,6 +49,7 @@ async fn server_fn_handler(
 }
 
 async fn leptos_routes_handler(
+  session: tower_sessions::Session,
   auth_session: auth::AuthSession,
   State(app_state): State<AppState>,
   req: Request<Body>,
@@ -53,10 +58,12 @@ async fn leptos_routes_handler(
     app_state.leptos_options.clone(),
     app_state.routes.clone(),
     move || {
-      // provide_context(auth_session.clone());
+      provide_context(auth_session.clone());
+      provide_context(session.clone());
       provide_context(core_types::LoggedInUser(
         auth_session.user.clone().map(core_types::PublicUser::from),
       ));
+      provide_context(app_state.db.clone());
     },
     site_app::App,
   );
@@ -98,6 +105,7 @@ async fn main() -> Result<()> {
   let state = AppState {
     leptos_options,
     routes: routes.clone(),
+    db: db::DbConnection::new().await?,
   };
 
   let auth_layer = auth::build_auth_layer().await?;

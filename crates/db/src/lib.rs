@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use core_types::USER_TABLE;
+use core_types::{MOTHER_TONGUE_TABLE, USER_TABLE};
 use eyre::{Context, Result};
 pub use surrealdb::{
   engine::remote::ws::Client as WsClient, Error as SurrealError,
@@ -77,5 +77,24 @@ impl DbConnection {
     user: core_types::User,
   ) -> SurrealResult<Option<core_types::User>> {
     Ok(self.use_main().await?.insert(user.id).content(user).await?)
+  }
+
+  pub async fn select_mother_tongues(
+    &self,
+    offset: u32,
+    count: u32,
+  ) -> SurrealResult<Vec<core_types::MotherTongue>> {
+    Ok(
+      self
+        .use_main()
+        .await?
+        .query(format!(
+          "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT $count START $offset"
+        ))
+        .bind(("count", count))
+        .bind(("offset", offset))
+        .await?
+        .take(0)?,
+    )
   }
 }

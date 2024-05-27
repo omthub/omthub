@@ -4,7 +4,7 @@ use crate::meta::Meta;
 
 pub const MOTHER_TONGUE_TABLE: &str = "mother_tongue";
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "ssr", serde(from = "crate::ssr::UlidOrThing"))]
 pub struct MotherTongueRecordId(pub ulid::Ulid);
 

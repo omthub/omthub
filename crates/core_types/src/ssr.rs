@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, hash::Hash};
 
 use serde::{Deserialize, Serialize};
 use surrealdb::{
@@ -63,6 +63,7 @@ pub trait CoreId:
   + Debug
   + PartialEq
   + Eq
+  + Hash
   + Serialize
   + for<'a> Deserialize<'a>
   + From<UlidOrThing>

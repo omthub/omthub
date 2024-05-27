@@ -16,6 +16,7 @@ serde.workspace = true
 core_types = { path = "../core_types" }
 
 auth = { path = "../auth", optional = true }
+db = { path = "../db", optional = true }
 tower-sessions = { workspace = true, optional = true }
 time = { workspace = true, optional = true }
 
@@ -29,5 +30,5 @@ hydrate = [
 ssr = [
   "leptos/ssr", "leptos/tracing", "leptos_meta/ssr", "leptos_router/ssr",
   "dep:leptos_axum", "core_types/ssr", "dep:auth", "dep:tower-sessions",
-  "dep:time",
+  "dep:time", "dep:db",
 ]

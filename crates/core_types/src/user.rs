@@ -6,7 +6,7 @@ use crate::meta::Meta;
 
 pub const USER_TABLE: &str = "users";
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "ssr", serde(from = "crate::ssr::UlidOrThing"))]
 pub struct UserRecordId(pub ulid::Ulid);
 
