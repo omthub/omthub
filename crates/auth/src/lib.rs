@@ -4,7 +4,7 @@
 use axum_login::{
   AuthManagerLayer, AuthManagerLayerBuilder, AuthnBackend, UserId,
 };
-use clients::diesel::prelude::*;
+use core_types::ssr::CoreId;
 use eyre::{eyre, Context, OptionExt, Result};
 use serde::{Deserialize, Serialize};
 use tower_sessions::ExpiredDeletion;
@@ -66,14 +66,14 @@ fn verify_password(pw_hash: &str, password: &str) -> Result<bool> {
 /// and has a [`signup`](Backend::signup) method for creating new users.
 #[derive(Clone, Debug)]
 pub struct Backend {
-  db: clients::DbConnection,
+  db: db::DbConnection,
 }
 
 impl Backend {
   /// Create a new backend instance.
   pub async fn new() -> eyre::Result<Self> {
     Ok(Self {
-      db: clients::DbConnection::new().await?,
+      db: db::DbConnection::new().await?,
     })
   }
 
@@ -88,25 +88,18 @@ impl Backend {
     email: String,
     password: String,
   ) -> Result<core_types::User> {
-    use core_types::schema::users;
+    let existing_users = self
+      .db
+      .select_all_users_matching_email(&email)
+      .await
+      .map_err(|e| eyre!("surrealdb error: {e}"))?;
 
-    let conn = &mut self.db.get().wrap_err("failed to get db from pool")?;
-
-    let user: Option<core_types::User> = users::table
-      .filter(users::email.eq(email.clone()))
-      .limit(1)
-      .select(core_types::User::as_select())
-      .load(conn)
-      .wrap_err("failed to select users from db")?
-      .first()
-      .cloned();
-
-    if user.is_some() {
+    if !existing_users.is_empty() {
       return Err(eyre!("User with email {} already exists", email));
     }
 
     let user_to_create: core_types::User = core_types::User {
-      id: core_types::Ulid::new(),
+      id: core_types::UserRecordId::new(),
       name,
       email,
       pw_hash: hash_password(&password)?,
@@ -114,12 +107,11 @@ impl Backend {
       is_active: true,
     };
 
-    let user: Option<core_types::User> = user_to_create
-      .insert_into(users::table)
-      .load(conn)
-      .wrap_err("failed to insert user into db")?
-      .first()
-      .cloned();
+    let user: Option<core_types::User> = self
+      .db
+      .insert_user(user_to_create)
+      .await
+      .map_err(|e| eyre!("surrealdb error: {e}"))?;
 
     user.ok_or_eyre("Failed to create user")
   }
@@ -128,9 +120,9 @@ impl Backend {
 #[derive(thiserror::Error, Debug)]
 pub enum AuthError {
   #[error("failed: {0}")]
-  Eyre(eyre::Report),
+  Surreal(db::SurrealError),
   #[error("duplicate users exist: {0:?}")]
-  Duplicates(Vec<core_types::Ulid>),
+  Duplicates(Vec<core_types::UserRecordId>),
 }
 
 #[async_trait::async_trait]
@@ -144,23 +136,18 @@ impl AuthnBackend for Backend {
     &self,
     credentials: Self::Credentials,
   ) -> Result<Option<Self::User>, Self::Error> {
-    // CAUTION: we don't do any argon comparison yet, and that's dangerous
-
-    use core_types::schema::users;
-
-    let conn = &mut self
+    let users = self
       .db
-      .get()
-      .wrap_err("failed to get db from pool")
-      .map_err(AuthError::Eyre)?;
-
-    let users: Vec<core_types::User> = users::table
-      .filter(users::email.eq(credentials.email.clone()))
-      .limit(1)
-      .select(core_types::User::as_select())
-      .load(conn)
-      .wrap_err("failed to select users from db")
-      .map_err(AuthError::Eyre)?;
+      .select_all_users_matching_email(&credentials.email)
+      .await
+      .map_err(AuthError::Surreal)?;
+    if users.len() > 1 {
+      tracing::warn!(
+        "found {} users for email {:?}",
+        users.len(),
+        &credentials.email
+      );
+    }
 
     let users = users
       .into_iter()
@@ -183,24 +170,12 @@ impl AuthnBackend for Backend {
     &self,
     user_id: &UserId<Self>,
   ) -> Result<Option<Self::User>, Self::Error> {
-    use core_types::schema::users;
-
-    let conn = &mut self
-      .db
-      .get()
-      .wrap_err("failed to get db from pool")
-      .map_err(AuthError::Eyre)?;
-
     Ok(
-      users::table
-        .filter(users::id.eq(user_id.to_string()))
-        .limit(1)
-        .select(core_types::User::as_select())
-        .load(conn)
-        .wrap_err("failed to select users from db")
-        .map_err(AuthError::Eyre)?
-        .first()
-        .cloned(),
+      self
+        .db
+        .select_user(core_types::UserRecordId(*user_id))
+        .await
+        .map_err(AuthError::Surreal)?,
     )
   }
 }
@@ -219,23 +194,17 @@ pub async fn build_auth_layer() -> Result<
     Backend,
     tower_sessions::CachingSessionStore<
       tower_sessions::MemoryStore,
-      tower_sessions_sqlx_store::PostgresStore,
+      tower_sessions_surrealdb_store::SurrealSessionStore<db::WsClient>,
     >,
   >,
 > {
-  tracing::info!("starting auth layer");
-  tracing::debug!("starting new connection to db with sqlx...");
-  let pool = sqlx::PgPool::connect(&clients::db_url()?)
-    .await
-    .wrap_err("failed to connect to db")?;
+  let surreal_client = db::DbConnection::new().await?.into_inner().await?;
+
   tracing::debug!("connected to db with sqlx");
-  let session_store = tower_sessions_sqlx_store::PostgresStore::new(pool)
-    .with_schema_name("public")
-    .map_err(eyre::Report::msg)
-    .wrap_err("failed to set session store schema name")?
-    .with_table_name("sessions")
-    .map_err(eyre::Report::msg)
-    .wrap_err("failed to set session store table name")?;
+  let session_store = tower_sessions_surrealdb_store::SurrealSessionStore::new(
+    surreal_client,
+    "sessions".to_string(),
+  );
 
   tokio::task::spawn(
     session_store

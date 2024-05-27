@@ -1,7 +1,10 @@
 use leptos::*;
-use serde::{Deserialize, Serialize};
 
-use crate::{components::*, helpers::navigation::navigate_to};
+use crate::{
+  components::*,
+  functions::auth::{Signup, SignupParams},
+  helpers::navigation::navigate_to,
+};
 
 #[derive(Clone, PartialEq)]
 pub enum DispatchState {
@@ -250,59 +253,4 @@ pub fn SignupPage() -> impl IntoView {
       </div>
     </div>
   }
-}
-
-#[derive(Clone, PartialEq, Serialize, Deserialize)]
-pub struct SignupParams {
-  pub name:     String,
-  pub email:    String,
-  pub password: String,
-  pub remember: bool,
-}
-
-use std::fmt::Debug;
-
-impl Debug for SignupParams {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    f.debug_struct("User")
-      .field("name", &self.name)
-      .field("email", &"[redacted]")
-      .field("pw_hash", &"[redacted]")
-      .field("remember", &self.remember)
-      .finish()
-  }
-}
-
-#[cfg_attr(feature = "ssr", tracing::instrument)]
-#[server]
-pub async fn signup(params: SignupParams) -> Result<(), ServerFnError> {
-  let SignupParams {
-    name,
-    email,
-    password,
-    remember,
-  } = params;
-
-  let auth_session = use_context::<auth::AuthSession>()
-    .ok_or_else(|| ServerFnError::new("Failed to get auth session"))?;
-
-  auth_session
-    .backend
-    .signup(name, email.clone(), password.clone())
-    .await
-    .map_err(|e| {
-      logging::error!("Failed to sign up: {:?}", e);
-      ServerFnError::new("Failed to sign up")
-    })?;
-
-  let _login_result =
-    crate::pages::login::login(crate::pages::login::LoginParams {
-      email: email.clone(),
-      password: password.clone(),
-      remember,
-    })
-    .await
-    .map_err(|e| ServerFnError::new(format!("Failed to log in: {e}")))?;
-
-  Ok(())
 }

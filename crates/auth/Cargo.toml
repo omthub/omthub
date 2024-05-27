@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-clients = { path = "../clients" }
+db = { path = "../db" }
 core_types = { path = "../core_types", features = [ "ssr", "auth" ] }
 
 async-trait.workspace = true
@@ -19,5 +19,4 @@ tokio.workspace = true
 tracing.workspace = true
 
 argon2 = { version = "0.5" }
-tower-sessions-sqlx-store = { version = "0.12", features = [ "postgres" ] }
-sqlx = { version = "0.7", features = [ "postgres", "runtime-tokio-rustls" ] }
+tower-sessions-surrealdb-store = { version = "0.4" }

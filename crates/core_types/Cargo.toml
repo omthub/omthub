@@ -11,11 +11,11 @@ ulid = { version = "1", default-features = false, features = [ "std", "serde" ] 
 serde_json = { version = "1" }
 
 eyre = { workspace = true, optional = true }
-diesel = { workspace = true, optional = true }
+surrealdb = { workspace = true, optional = true }
 
 axum-login = { workspace = true, optional = true }
 
 [features]
 default = [ ]
-ssr = [ "dep:eyre", "dep:diesel" ]
+ssr = [ "dep:eyre", "dep:surrealdb" ]
 auth = [ "dep:axum-login" ]

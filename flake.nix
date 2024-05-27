@@ -20,6 +20,9 @@
         overlays = [ (import rust-overlay) ];
         pkgs = (import nixpkgs) {
           inherit system overlays;
+          config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+            "surrealdb"
+          ];
         };
 
         # filter the source to reduce cache misses
@@ -76,9 +79,6 @@
             # used by cargo-leptos for styling
             pkgs.dart-sass
             pkgs.tailwindcss
-
-            # used by diesel
-            pkgs.postgresql
           ] ++ pkgs.lib.optionals (system == "x86_64-linux") [
             pkgs.nasm # wasm compiler only for x86_64-linux
           ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
@@ -133,6 +133,7 @@
         site-server-container = pkgs.dockerTools.buildLayeredImage {
           name = leptos-options.bin-package;
           tag = "latest";
+          contents = [ pkgs.surrealdb ];
           config = {
             # we're not using tini here because we don't need to with
             # fly.io's vm runner, because they use firecracker
@@ -219,6 +220,10 @@
             bacon # cargo check w/ hot reload
             cargo-deny # license checking
             yarn # interacting with style deps
+
+            # surreal stuff
+            surrealdb
+            surrealdb-migrations
           ])
             ++ common-args.buildInputs
             ++ common-args.nativeBuildInputs
