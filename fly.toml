@@ -8,10 +8,30 @@ primary_region = 'ewr'
 kill_signal = 'SIGINT'
 kill_timeout = '5s'
 
-[http_service]
-  internal_port = 3000
+[processes]
+  app = "site-server"
+  surreal = "surreal start --log=info --auth --bind '[::]':8000 file:/data/srdb.db"
 
 [[vm]]
-  size = 'shared-cpu-1x'
-  memory = '256MB'
-  processes = ['app']
+  size = "shared-cpu-2x"
+  memory = "512MB"
+  processes = ["app"]
+
+[env]
+  SURREAL_WS_URL = "omthub.internal:8000"
+  # these are fine in plain text because surreal is not exposed
+  SURREAL_USER = "root"
+  SURREAL_PASS = "pass"
+
+[[mounts]]
+  source = "surreal_data"
+  destination = "/data"
+  initial_size = "1gb"
+  processes = ["surreal"]
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = "1gb"
+  auto_extend_size_limit = "5gb"
+
+[http_service]
+  internal_port = 3000
+  processes = ["app"]
