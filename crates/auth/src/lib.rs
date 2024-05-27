@@ -141,7 +141,13 @@ impl AuthnBackend for Backend {
       .select_all_users_matching_email(&credentials.email)
       .await
       .map_err(AuthError::Surreal)?;
-    tracing::info!("got {} users", users.len());
+    if users.len() > 1 {
+      tracing::warn!(
+        "found {} users for email {:?}",
+        users.len(),
+        &credentials.email
+      );
+    }
 
     let users = users
       .into_iter()

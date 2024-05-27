@@ -41,7 +41,6 @@ async fn server_fn_handler(
         auth_session.user.clone().map(core_types::PublicUser::from),
       ));
       provide_context(app_state.db.clone());
-      tracing::warn!("running server fn handler");
     },
     request,
   )
