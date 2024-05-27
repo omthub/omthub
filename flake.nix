@@ -133,6 +133,7 @@
         site-server-container = pkgs.dockerTools.buildLayeredImage {
           name = leptos-options.bin-package;
           tag = "latest";
+          contents = [ pkgs.surrealdb ];
           config = {
             # we're not using tini here because we don't need to with
             # fly.io's vm runner, because they use firecracker
