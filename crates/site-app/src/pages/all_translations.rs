@@ -5,10 +5,8 @@ use crate::functions::fetch::fetch_all_translations;
 #[component]
 pub fn AllTranslationsPage() -> impl IntoView {
   let (offset, _set_offset) = create_signal(0_u32);
-  let tongues = create_resource(
-    move || offset(),
-    move |offset| fetch_all_translations(offset, 25),
-  );
+  let tongues =
+    create_resource(offset, move |offset| fetch_all_translations(offset, 25));
 
   view! {
     <div class="flex flex-col p-8 gap-4">

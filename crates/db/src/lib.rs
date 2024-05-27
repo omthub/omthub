@@ -54,29 +54,27 @@ impl DbConnection {
     &self,
     user_id: core_types::UserRecordId,
   ) -> SurrealResult<Option<core_types::User>> {
-    Ok(self.use_main().await?.select(user_id).await?)
+    self.use_main().await?.select(user_id).await
   }
 
   pub async fn select_all_users_matching_email(
     &self,
     email: &str,
   ) -> SurrealResult<Vec<core_types::User>> {
-    Ok(
-      self
-        .use_main()
-        .await?
-        .query(format!("SELECT * FROM {USER_TABLE} WHERE email = $email"))
-        .bind(("email", email))
-        .await?
-        .take(0)?,
-    )
+    self
+      .use_main()
+      .await?
+      .query(format!("SELECT * FROM {USER_TABLE} WHERE email = $email"))
+      .bind(("email", email))
+      .await?
+      .take(0)
   }
 
   pub async fn insert_user(
     &self,
     user: core_types::User,
   ) -> SurrealResult<Option<core_types::User>> {
-    Ok(self.use_main().await?.insert(user.id).content(user).await?)
+    self.use_main().await?.insert(user.id).content(user).await
   }
 
   pub async fn select_mother_tongues(
@@ -84,17 +82,15 @@ impl DbConnection {
     offset: u32,
     count: u32,
   ) -> SurrealResult<Vec<core_types::MotherTongue>> {
-    Ok(
-      self
-        .use_main()
-        .await?
-        .query(format!(
-          "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT $count START $offset"
-        ))
-        .bind(("count", count))
-        .bind(("offset", offset))
-        .await?
-        .take(0)?,
-    )
+    self
+      .use_main()
+      .await?
+      .query(format!(
+        "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT $count START $offset"
+      ))
+      .bind(("count", count))
+      .bind(("offset", offset))
+      .await?
+      .take(0)
   }
 }
