@@ -133,13 +133,12 @@
         site-server-container = pkgs.dockerTools.buildLayeredImage {
           name = leptos-options.bin-package;
           tag = "latest";
-          contents = [ pkgs.surrealdb ];
+          contents = [ pkgs.surrealdb site-server ];
           config = {
             # we're not using tini here because we don't need to with
             #   fly.io's vm runner, because they use firecracker
             Entrypoint = [ ];
-            WorkingDir = "${site-server}/bin";
-            Cmd = [ "./site-server" ];
+            Cmd = [ "site-server" ];
             # we provide the env variables that we get from Cargo.toml during
             #   development these can be overridden when the container is run,
             #   but defaults are needed
