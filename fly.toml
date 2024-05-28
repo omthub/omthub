@@ -16,6 +16,10 @@ kill_timeout = '5s'
   size = "shared-cpu-2x"
   memory = "512MB"
   processes = ["app"]
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512MB"
+  processes = ["surreal"]
 
 [env]
   SURREAL_WS_URL = "omthub.internal:8000"
