@@ -136,19 +136,24 @@
           contents = [ pkgs.surrealdb ];
           config = {
             # we're not using tini here because we don't need to with
-            # fly.io's vm runner, because they use firecracker
-            Entrypoint = [ "${site-server}/bin/site-server" ];
+            #   fly.io's vm runner, because they use firecracker
+            Entrypoint = [ ];
             WorkingDir = "${site-server}/bin";
-            # we provide the env variables that we get from Cargo.toml during development
-            # these can be overridden when the container is run, but defaults are needed
+            Cmd = [ "./site-server" ];
+            # we provide the env variables that we get from Cargo.toml during
+            #   development these can be overridden when the container is run,
+            #   but defaults are needed
             Env = [
               "LEPTOS_OUTPUT_NAME=${leptos-options.name}"
               "LEPTOS_SITE_ROOT=${leptos-options.name}"
               "LEPTOS_SITE_PKG_DIR=${leptos-options.site-pkg-dir}"
               "LEPTOS_SITE_ADDR=0.0.0.0:3000"
-              # "LEPTOS_RELOAD_PORT=${builtins.toString leptos-options.reload-port}"
+              # only used for user-defined things, like my cache headers on
+              #   static files
               "LEPTOS_ENV=PROD"
-              # "LEPTOS_HASH_FILES=${builtins.toJSON leptos-options.hash-files}"
+              # this is set statically because I want this on only in prod;
+              #   it breaks things in dev. I don't know why `1` doesn't work;
+              #   it only picks it up if it's `true`
               "LEPTOS_HASH_FILES=true"
             ];
           };
