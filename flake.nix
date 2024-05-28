@@ -137,8 +137,8 @@
           config = {
             # we're not using tini here because we don't need to with
             #   fly.io's vm runner, because they use firecracker
-            Entrypoint = [ ];
             Cmd = [ "site-server" ];
+            WorkingDir = "${site-server}/bin";
             # we provide the env variables that we get from Cargo.toml during
             #   development these can be overridden when the container is run,
             #   but defaults are needed
