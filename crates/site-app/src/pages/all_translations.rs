@@ -2,7 +2,7 @@ use leptos::*;
 
 use crate::functions::fetch::fetch_all_translations;
 
-#[component]
+#[island]
 pub fn AllTranslationsPage() -> impl IntoView {
   let (offset, _set_offset) = create_signal(0_u32);
   let tongues =
