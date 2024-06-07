@@ -77,20 +77,16 @@ impl DbConnection {
     self.use_main().await?.insert(user.id).content(user).await
   }
 
+  #[tracing::instrument(skip(self))]
   pub async fn select_mother_tongues(
     &self,
     offset: u32,
     count: u32,
   ) -> SurrealResult<Vec<core_types::MotherTongue>> {
-    self
-      .use_main()
-      .await?
-      .query(format!(
-        "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT $count START $offset"
-      ))
-      .bind(("count", count))
-      .bind(("offset", offset))
-      .await?
-      .take(0)
+    let query = format!(
+      "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT {count} START {offset}"
+    );
+    tracing::info!("query = {query:?}");
+    self.use_main().await?.query(query).await?.take(0)
   }
 }

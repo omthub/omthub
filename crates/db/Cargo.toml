@@ -9,3 +9,4 @@ core_types = { path = "../core_types", features = [ "ssr" ] }
 
 surrealdb.workspace = true
 eyre.workspace = true
+tracing.workspace = true

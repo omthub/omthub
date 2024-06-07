@@ -1073,6 +1073,7 @@ dependencies = [
  "core_types",
  "eyre",
  "surrealdb",
+ "tracing",
 ]
 
 [[package]]
