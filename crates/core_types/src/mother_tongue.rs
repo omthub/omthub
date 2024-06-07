@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::meta::Meta;
 
-pub const MOTHER_TONGUE_TABLE: &str = "mother_tongue";
+pub const MOTHER_TONGUE_TABLE: &str = "mother_tongues";
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "ssr", serde(from = "crate::ssr::UlidOrThing"))]
