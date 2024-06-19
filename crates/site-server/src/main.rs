@@ -73,12 +73,12 @@ async fn leptos_routes_handler(
 async fn main() -> Result<()> {
   color_eyre::install().expect("Failed to install color_eyre");
 
-  let filter = tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or(
-    tracing_subscriber::EnvFilter::new("info,site_server=debug,site_app=debug"),
-  );
-
   #[cfg(not(feature = "chrome-tracing"))]
   {
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+      .unwrap_or(tracing_subscriber::EnvFilter::new(
+        "info,site_server=debug,site_app=debug",
+      ));
     tracing_subscriber::fmt().with_env_filter(filter).init();
   }
   #[cfg(feature = "chrome-tracing")]
@@ -129,6 +129,9 @@ async fn main() -> Result<()> {
   log::info!("listening on http://{}", &addr);
   let socket = tokio::net::TcpListener::bind(&addr).await.unwrap();
   axum::serve(socket, app).await.unwrap();
+
+  #[cfg(feature = "chrome-tracing")]
+  drop(guard);
 
   Ok(())
 }
