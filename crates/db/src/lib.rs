@@ -90,38 +90,26 @@ impl DbConnection {
     offset: u32,
     count: u32,
   ) -> SurrealResult<(Vec<core_types::MotherTongue>, usize)> {
-    if let Some(term) = term {
-      let where_statement =
+    let mut query = if let Some(term) = term {
+      let where_clause =
         "WHERE (string::contains(string::lowercase(name), $term) || \
          string::contains(string::lowercase(description), $term))";
 
       let count_query = format!(
-        "SELECT count() FROM {MOTHER_TONGUE_TABLE} {where_statement} GROUP all"
+        "SELECT count() FROM {MOTHER_TONGUE_TABLE} {where_clause} GROUP all"
       );
       let content_query = format!(
-        "SELECT * FROM {MOTHER_TONGUE_TABLE} {where_statement} LIMIT {count} \
+        "SELECT * FROM {MOTHER_TONGUE_TABLE} {where_clause} LIMIT {count} \
          START {offset}"
       );
 
-      let count: Option<Count> = self
+      self
         .use_main()
         .await?
         .query(count_query)
-        .bind(("term", term.to_lowercase()))
-        .await?
-        .take(0)?;
-      // we can reasonably always expect surreal to return this bc of the GROUP
-      let count = count.unwrap().count;
-
-      let content: Vec<core_types::MotherTongue> = self
-        .use_main()
-        .await?
         .query(content_query)
         .bind(("term", term.to_lowercase()))
         .await?
-        .take(0)?;
-
-      Ok((content, count))
     } else {
       let count_query =
         format!("SELECT count() FROM {MOTHER_TONGUE_TABLE} GROUP all");
@@ -129,15 +117,19 @@ impl DbConnection {
         "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT {count} START {offset}"
       );
 
-      let count: Option<Count> =
-        self.use_main().await?.query(count_query).await?.take(0)?;
-      // we can reasonably always expect surreal to return this bc of the GROUP
-      let count = count.unwrap().count;
+      self
+        .use_main()
+        .await?
+        .query(count_query)
+        .query(content_query)
+        .await?
+    };
 
-      let content: Vec<core_types::MotherTongue> =
-        self.use_main().await?.query(content_query).await?.take(0)?;
+    let count: Option<Count> = query.take(0)?;
+    let content: Vec<core_types::MotherTongue> = query.take(1)?;
+    // we can reasonably always expect surreal to return this bc of the GROUP
+    let count = count.unwrap().count;
 
-      Ok((content, count))
-    }
+    Ok((content, count))
   }
 }
