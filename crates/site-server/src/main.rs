@@ -17,6 +17,7 @@ use leptos_router::RouteListing;
 use site_app::App;
 use tower::ServiceBuilder;
 use tower_http::compression::CompressionLayer;
+use tracing_subscriber::prelude::*;
 
 use self::fileserv::file_and_error_handler;
 
@@ -79,12 +80,15 @@ async fn main() -> Result<()> {
       .unwrap_or(tracing_subscriber::EnvFilter::new(
         "info,site_server=debug,site_app=debug",
       ));
-    tracing_subscriber::fmt().with_env_filter(filter).init();
+    let error_layer = tracing_error::ErrorLayer::default();
+    tracing_subscriber::registry()
+      .with(filter)
+      .with(error_layer)
+      .with(tracing_subscriber::fmt::layer())
+      .init();
   }
   #[cfg(feature = "chrome-tracing")]
   let guard = {
-    use tracing_subscriber::prelude::*;
-
     let (chrome_layer, guard) =
       tracing_chrome::ChromeLayerBuilder::new().build();
     tracing_subscriber::registry().with(chrome_layer).init();

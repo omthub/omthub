@@ -1,12 +1,18 @@
 use std::sync::Arc;
 
 use core_types::{MOTHER_TONGUE_TABLE, USER_TABLE};
-use eyre::{Context, Result};
+use eyre::{Context, OptionExt, Result};
+use serde::Deserialize;
 pub use surrealdb::{
   engine::remote::ws::Client as WsClient, Error as SurrealError,
   Result as SurrealResult,
 };
 use surrealdb::{engine::remote::ws::Ws, opt::auth::Root, Surreal};
+
+#[derive(Deserialize)]
+pub struct Count {
+  pub count: usize,
+}
 
 #[derive(Clone, Debug)]
 pub struct DbConnection(Arc<Surreal<WsClient>>);
@@ -83,28 +89,55 @@ impl DbConnection {
     term: Option<String>,
     offset: u32,
     count: u32,
-  ) -> SurrealResult<Vec<core_types::MotherTongue>> {
+  ) -> SurrealResult<(Vec<core_types::MotherTongue>, usize)> {
     if let Some(term) = term {
-      let query = format!(
-        "SELECT * FROM {MOTHER_TONGUE_TABLE} WHERE \
-         (string::contains(string::lowercase(name), $term) || \
-         string::contains(string::lowercase(description), $term)) LIMIT \
-         {count} START {offset}"
+      let where_statement =
+        "WHERE (string::contains(string::lowercase(name), $term) || \
+         string::contains(string::lowercase(description), $term))";
+
+      let count_query = format!(
+        "SELECT count() FROM {MOTHER_TONGUE_TABLE} {where_statement} GROUP all"
       );
-      tracing::info!("query = {query:?}");
-      self
+      let content_query = format!(
+        "SELECT * FROM {MOTHER_TONGUE_TABLE} {where_statement} LIMIT {count} \
+         START {offset}"
+      );
+
+      let count: Option<Count> = self
         .use_main()
         .await?
-        .query(query)
+        .query(count_query)
         .bind(("term", term.to_lowercase()))
         .await?
-        .take(0)
+        .take(0)?;
+      // we can reasonably always expect surreal to return this bc of the GROUP
+      let count = count.unwrap().count;
+
+      let content: Vec<core_types::MotherTongue> = self
+        .use_main()
+        .await?
+        .query(content_query)
+        .bind(("term", term.to_lowercase()))
+        .await?
+        .take(0)?;
+
+      Ok((content, count))
     } else {
-      let query = format!(
+      let count_query =
+        format!("SELECT count() FROM {MOTHER_TONGUE_TABLE} GROUP all");
+      let content_query = format!(
         "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT {count} START {offset}"
       );
-      tracing::info!("query = {query:?}");
-      self.use_main().await?.query(query).await?.take(0)
+
+      let count: Option<Count> =
+        self.use_main().await?.query(count_query).await?.take(0)?;
+      // we can reasonably always expect surreal to return this bc of the GROUP
+      let count = count.unwrap().count;
+
+      let content: Vec<core_types::MotherTongue> =
+        self.use_main().await?.query(content_query).await?.take(0)?;
+
+      Ok((content, count))
     }
   }
 }

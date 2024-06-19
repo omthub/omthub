@@ -7,6 +7,7 @@ publish = false
 [dependencies]
 core_types = { path = "../core_types", features = [ "ssr" ] }
 
+serde.workspace = true
 surrealdb.workspace = true
 eyre.workspace = true
 tracing.workspace = true

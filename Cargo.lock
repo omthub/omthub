@@ -1078,6 +1078,7 @@ version = "0.1.0"
 dependencies = [
  "core_types",
  "eyre",
+ "serde",
  "surrealdb",
  "tracing",
 ]
@@ -4127,6 +4128,7 @@ dependencies = [
  "auth",
  "core_types",
  "db",
+ "eyre",
  "leptos",
  "leptos_axum",
  "leptos_meta",
@@ -4135,6 +4137,7 @@ dependencies = [
  "time",
  "tokio",
  "tower-sessions",
+ "tracing",
  "web-sys",
 ]
 
@@ -4169,6 +4172,7 @@ dependencies = [
  "tower-http",
  "tower-sessions",
  "tracing-chrome",
+ "tracing-error",
  "tracing-subscriber",
 ]
 
