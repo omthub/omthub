@@ -12,7 +12,6 @@ container:
 	docker run --rm --init --env-file .env --network host site-server
 trace:
 	cargo leptos serve --bin-features chrome-tracing
-
 surreal:
 	mkdir /tmp/surreal_data -p && surreal start file:/tmp/omthub_surreal_data --log=info --auth
 wipe-surreal:
