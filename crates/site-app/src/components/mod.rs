@@ -1,5 +1,6 @@
-mod logout;
-mod navbar;
+pub mod logout;
+pub mod mother_tongues_table;
+pub mod navbar;
 
 use leptos::*;
 pub use navbar::*;

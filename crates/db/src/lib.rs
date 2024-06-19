@@ -80,13 +80,31 @@ impl DbConnection {
   #[tracing::instrument(skip(self))]
   pub async fn select_mother_tongues(
     &self,
+    term: Option<String>,
     offset: u32,
     count: u32,
   ) -> SurrealResult<Vec<core_types::MotherTongue>> {
-    let query = format!(
-      "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT {count} START {offset}"
-    );
-    tracing::info!("query = {query:?}");
-    self.use_main().await?.query(query).await?.take(0)
+    if let Some(term) = term {
+      let query = format!(
+        "SELECT * FROM {MOTHER_TONGUE_TABLE} WHERE \
+         (string::contains(string::lowercase(name), $term) || \
+         string::contains(string::lowercase(description), $term)) LIMIT \
+         {count} START {offset}"
+      );
+      tracing::info!("query = {query:?}");
+      self
+        .use_main()
+        .await?
+        .query(query)
+        .bind(("term", term.to_lowercase()))
+        .await?
+        .take(0)
+    } else {
+      let query = format!(
+        "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT {count} START {offset}"
+      );
+      tracing::info!("query = {query:?}");
+      self.use_main().await?.query(query).await?.take(0)
+    }
   }
 }
