@@ -34,7 +34,7 @@ pub fn MotherTonguesTable() -> impl IntoView {
       <InnerMotherTonguesTable>
         <Transition fallback=SuspenseMotherTonguesTable>
           {move || tongues().map(|data| match data {
-            Ok((data, count)) => view! {
+            Ok((data, _count)) => view! {
               <tbody>
                 <For
                   each=move || data.clone() key={|t| t.id}

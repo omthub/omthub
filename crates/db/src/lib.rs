@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use core_types::{MOTHER_TONGUE_TABLE, USER_TABLE};
-use eyre::{Context, OptionExt, Result};
+use eyre::{Context, Result};
 use serde::Deserialize;
 pub use surrealdb::{
   engine::remote::ws::Client as WsClient, Error as SurrealError,
