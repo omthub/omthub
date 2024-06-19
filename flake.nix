@@ -93,21 +93,37 @@
 
         };
 
-        # Build *just* the cargo dependencies, so we can reuse
-        # all of that work (e.g. via cachix) when running in CI
-        site-server-deps = craneLib.buildDepsOnly (common-args // {
-          # if work is duplicated by the `server-site` package, update these
-          # commands from the logs of `cargo leptos build --release -vvv`
+        # build the deps for the frontend bundle, and export the target folder
+        site-frontend-deps = craneLib.mkCargoDerivation (common-args // {
+          pname = "site-frontend-deps";
+          cargoArtifacts = null;
+          doInstallCargoArtifacts = true;
+
           buildPhaseCargoCommand = ''
-            # build the frontend dependencies
-            cargo build --package=${leptos-options.lib-package} --lib --target-dir=/build/source/target/front --target=wasm32-unknown-unknown --no-default-features --profile=${leptos-options.lib-profile-release}
-            # build the server dependencies
-            cargo build --package=${leptos-options.bin-package} --no-default-features --release
+            cargo build \
+              --package=${leptos-options.lib-package} \
+              --lib \
+              --target-dir=/build/source/target/front \
+              --target=wasm32-unknown-unknown \
+              --no-default-features \
+              --profile=${leptos-options.lib-profile-release}
+          '';
+        });
+        # build the deps for the server binary, and export the target folder
+        site-server-deps = craneLib.mkCargoDerivation (common-args // {
+          pname = "site-server-deps";
+          cargoArtifacts = site-frontend-deps;
+          doInstallCargoArtifacts = true;
+
+          buildPhaseCargoCommand = ''
+            cargo build \
+              --package=${leptos-options.bin-package} \
+              --no-default-features \
+              --release
           '';
         });
 
-        # Build the actual crate itself, reusing the dependency
-        # artifacts from above.
+        # build the binary and bundle using cargo leptos
         site-server = craneLib.buildPackage (common-args // {
           # link the style packages node_modules into the build directory
           preBuild = ''
@@ -115,8 +131,9 @@
               ./crates/site-app/style/tailwind/node_modules
           '';
           
+          # enable hash_files again
           buildPhaseCargoCommand = ''
-            LEPTOS_HASH_FILES=true cargo leptos build --release -vvv
+            RUST_BACKTRACE=1 LEPTOS_HASH_FILES=true cargo leptos build --release -vvv
           '';
 
           installPhaseCommand = ''
