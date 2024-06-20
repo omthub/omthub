@@ -1255,6 +1255,7 @@ version = "0.1.0"
 dependencies = [
  "core_types",
  "eyre",
+ "include_dir",
  "serde",
  "surrealdb",
  "surrealdb-migrations",

@@ -2,12 +2,15 @@ use std::sync::Arc;
 
 use core_types::{MOTHER_TONGUE_TABLE, USER_TABLE};
 use eyre::{Context, Result};
+use include_dir::{include_dir, Dir};
 use serde::Deserialize;
 pub use surrealdb::{
   engine::remote::ws::Client as WsClient, Error as SurrealError,
   Result as SurrealResult,
 };
 use surrealdb::{engine::remote::ws::Ws, opt::auth::Root, Surreal};
+
+const MIGRATIONS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/migrations");
 
 #[derive(Deserialize)]
 pub struct Count {
@@ -135,7 +138,11 @@ impl DbConnection {
   #[tracing::instrument(skip(self))]
   pub async fn run_migrations(&self) -> Result<()> {
     let db = self.use_main().await?;
-    surrealdb_migrations::MigrationRunner::new(&db).up().await?;
+
+    surrealdb_migrations::MigrationRunner::new(&db)
+      .load_files(&MIGRATIONS_DIR)
+      .up()
+      .await?;
 
     Ok(())
   }
