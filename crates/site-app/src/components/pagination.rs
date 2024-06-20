@@ -38,7 +38,7 @@ pub fn Pagination(
   let right_button = move || {
     view! {
       <button
-        class="btn" disabled={move || current_page() == total_pages() - 1}
+        class="btn" disabled={move || total_pages() == 0 || current_page() == total_pages() - 1}
         on:click={move |_| right_one_page()}
       >
         <RightArrowSvg />
@@ -95,6 +95,10 @@ fn select_page_range(
   count_to_select: u32,
   total_pages: u32,
 ) -> Vec<u32> {
+  if total_pages == 0 {
+    return vec![];
+  }
+
   // if we're only selecting one page
   if count_to_select == 1 {
     return vec![current];
@@ -130,6 +134,7 @@ mod tests {
 
   #[test]
   fn select_page_range_works() {
+    assert_eq!(select_page_range(2, 5, 0), Vec::<u32>::new());
     assert_eq!(select_page_range(2, 1, 6), vec![2]);
     assert_eq!(select_page_range(2, 6, 6), vec![0, 1, 2, 3, 4, 5]);
     assert_eq!(select_page_range(2, 7, 6), vec![0, 1, 2, 3, 4, 5]);
