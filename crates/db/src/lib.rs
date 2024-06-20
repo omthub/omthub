@@ -91,16 +91,15 @@ impl DbConnection {
     count: u32,
   ) -> SurrealResult<(Vec<core_types::MotherTongue>, usize)> {
     let mut query = if let Some(term) = term {
-      let where_clause =
-        "WHERE (string::contains(string::lowercase(name), $term) || \
-         string::contains(string::lowercase(description), $term))";
+      let where_clause = "WHERE name @0@ $term || description @1@ $term";
 
       let count_query = format!(
         "SELECT count() FROM {MOTHER_TONGUE_TABLE} {where_clause} GROUP all"
       );
       let content_query = format!(
-        "SELECT * FROM {MOTHER_TONGUE_TABLE} {where_clause} LIMIT {count} \
-         START {offset}"
+        "SELECT *, search::score(0) * 2 + search::score(1) * 1 AS relevance \
+         FROM {MOTHER_TONGUE_TABLE} {where_clause} ORDER BY relevance DESC \
+         LIMIT {count} START {offset}"
       );
 
       self
@@ -128,8 +127,16 @@ impl DbConnection {
     let count: Option<Count> = query.take(0)?;
     let content: Vec<core_types::MotherTongue> = query.take(1)?;
     // we can reasonably always expect surreal to return this bc of the GROUP
-    let count = count.unwrap().count;
+    let count = count.map(|c| c.count).unwrap_or(0);
 
     Ok((content, count))
+  }
+
+  #[tracing::instrument(skip(self))]
+  pub async fn run_migrations(&self) -> Result<()> {
+    let db = self.use_main().await?;
+    surrealdb_migrations::MigrationRunner::new(&db).up().await?;
+
+    Ok(())
   }
 }

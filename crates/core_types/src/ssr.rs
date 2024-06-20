@@ -102,10 +102,7 @@ macro_rules! impl_table {
       fn new() -> Self { $id_type(ulid::Ulid::new()) }
       fn new_with_id(inner_id: ulid::Ulid) -> Self { $id_type(inner_id) }
       fn to_thing(&self) -> Thing {
-        Thing {
-          tb: Self::TABLE.to_string(),
-          id: Id::String(self.0.to_string()),
-        }
+        Thing::from((Self::TABLE.to_string(), Id::String(self.0.to_string())))
       }
     }
 

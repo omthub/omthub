@@ -11,3 +11,5 @@ serde.workspace = true
 surrealdb.workspace = true
 eyre.workspace = true
 tracing.workspace = true
+
+surrealdb-migrations = { version = "1.5" }

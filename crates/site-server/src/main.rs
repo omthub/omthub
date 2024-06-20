@@ -8,7 +8,7 @@ use axum::{
   routing::get,
   Router,
 };
-use color_eyre::eyre::Result;
+use color_eyre::eyre::{Context, Result};
 use leptos::*;
 use leptos_axum::{
   generate_route_list, handle_server_fns_with_context, LeptosRoutes,
@@ -95,6 +95,12 @@ async fn main() -> Result<()> {
     guard
   };
 
+  let db = db::DbConnection::new().await?;
+  db.run_migrations()
+    .await
+    .wrap_err("failed to run db migrations")?;
+  log::info!("ran migrations");
+
   // Setting get_configuration(None) means we'll be using cargo-leptos's env
   // values For deployment these variables are:
   // <https://github.com/leptos-rs/start-axum#executing-a-server-on-a-remote-machine-without-the-toolchain>
@@ -108,7 +114,7 @@ async fn main() -> Result<()> {
   let state = AppState {
     leptos_options,
     routes: routes.clone(),
-    db: db::DbConnection::new().await?,
+    db,
   };
 
   let auth_layer = auth::build_auth_layer().await?;
