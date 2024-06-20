@@ -1,13 +1,16 @@
 use leptos::*;
 
-use crate::functions::fetch::fetch_all_mother_tongues;
+use crate::{
+  components::pagination::Pagination,
+  functions::fetch::fetch_all_mother_tongues,
+};
 
-const DEFAULT_FETCH_LIMIT: usize = 25;
+const DEFAULT_FETCH_LIMIT: usize = 10;
 
 #[island]
 pub fn MotherTonguesTable() -> impl IntoView {
   let (query_term, set_query_term) = create_signal(String::new());
-  let (current_page, _set_current_page) = create_signal(0_u32);
+  let (current_page, set_current_page) = create_signal(0_u32);
   let tongues = create_resource(
     move || {
       with!(|query_term, current_page| {
@@ -30,7 +33,7 @@ pub fn MotherTonguesTable() -> impl IntoView {
     tongues().map(|d| match d {
       Ok((data, count)) => {
         let page_count =
-          (count as f32 / DEFAULT_FETCH_LIMIT as f32).ceil() as usize;
+          (count as f32 / DEFAULT_FETCH_LIMIT as f32).ceil() as u32;
         view! {
           <InnerMotherTonguesTable>
             <tbody>
@@ -40,6 +43,11 @@ pub fn MotherTonguesTable() -> impl IntoView {
               />
             </tbody>
           </InnerMotherTonguesTable>
+          <Pagination class="self-center"
+            total_pages={page_count.into()}
+            current_page={current_page.into()}
+            set_page=set_current_page
+          />
         }
         .into_view()
       }
