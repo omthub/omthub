@@ -241,6 +241,7 @@
             bacon # cargo check w/ hot reload
             cargo-deny # license checking
             yarn # interacting with style deps
+            cargo-nextest # rust testing
 
             # surreal stuff
             surrealdb
