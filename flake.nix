@@ -33,6 +33,7 @@
             (nix-filter.lib.matchExt "toml")
             ./Cargo.lock
             ./crates
+            ./.cargo
           ];
         };
         
@@ -73,7 +74,7 @@
           doCheck = false;
 
           nativeBuildInputs = [
-            cargo-leptos
+            pkgs.clang pkgs.mold # faster compilation
             pkgs.binaryen # provides wasm-opt
 
             # used by cargo-leptos for styling
@@ -96,6 +97,7 @@
         # build the deps for the frontend bundle, and export the target folder
         site-frontend-deps = craneLib.mkCargoDerivation (common-args // {
           pname = "site-frontend-deps";
+          src = craneLib.mkDummySrc common-args;
           cargoArtifacts = null;
           doInstallCargoArtifacts = true;
 
@@ -112,6 +114,7 @@
         # build the deps for the server binary, and export the target folder
         site-server-deps = craneLib.mkCargoDerivation (common-args // {
           pname = "site-server-deps";
+          src = craneLib.mkDummySrc common-args;
           cargoArtifacts = site-frontend-deps;
           doInstallCargoArtifacts = true;
 
@@ -125,6 +128,8 @@
 
         # build the binary and bundle using cargo leptos
         site-server = craneLib.buildPackage (common-args // {
+          nativeBuildInputs = common-args.nativeBuildInputs ++ [ cargo-leptos ];
+        
           # link the style packages node_modules into the build directory
           preBuild = ''
             ln -s ${style-js-deps}/node_modules \
