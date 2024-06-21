@@ -139,7 +139,7 @@ impl DbConnection {
   pub async fn run_migrations(&self) -> Result<()> {
     let db = self.use_main().await?;
 
-    surrealdb_migrations::MigrationRunner::new(&db)
+    surrealdb_migrations::MigrationRunner::new(db)
       .load_files(&MIGRATIONS_DIR)
       .up()
       .await?;

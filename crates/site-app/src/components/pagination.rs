@@ -19,10 +19,14 @@ pub fn Pagination(
   });
 
   let left_one_page = move || {
-    set_page.map(|w| w.update(|i| *i -= 1));
+    if let Some(w) = set_page {
+      w.update(|i| *i -= 1)
+    }
   };
   let right_one_page = move || {
-    set_page.map(|w| w.update(|i| *i += 1));
+    if let Some(w) = set_page {
+      w.update(|i| *i += 1)
+    }
   };
 
   let left_button = move || {
@@ -51,10 +55,15 @@ pub fn Pagination(
       .get()
       .into_iter()
       .map(|i| {
+        let select_callback = move |_| {
+          if let Some(w) = set_page {
+            w(i)
+          }
+        };
         view! {
           <button
             class="btn" class=("btn-active", {i == current_page.get()})
-            on:click={move |_| { set_page.map(|w| w(i)); }}
+            on:click=select_callback
           >
             { i + 1 }
           </button>
