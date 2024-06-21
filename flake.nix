@@ -76,10 +76,6 @@
           nativeBuildInputs = [
             pkgs.clang pkgs.mold # faster compilation
             pkgs.binaryen # provides wasm-opt
-
-            # used by cargo-leptos for styling
-            pkgs.dart-sass
-            pkgs.tailwindcss
           ] ++ pkgs.lib.optionals (system == "x86_64-linux") [
             pkgs.nasm # wasm compiler only for x86_64-linux
           ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
@@ -128,7 +124,13 @@
 
         # build the binary and bundle using cargo leptos
         site-server = craneLib.buildPackage (common-args // {
-          nativeBuildInputs = common-args.nativeBuildInputs ++ [ cargo-leptos ];
+          # add inputs needed for leptos build
+          nativeBuildInputs = common-args.nativeBuildInputs ++ [
+            cargo-leptos
+            # used by cargo-leptos for styling
+            pkgs.dart-sass
+            pkgs.tailwindcss
+         ];
         
           # link the style packages node_modules into the build directory
           preBuild = ''
@@ -162,7 +164,7 @@
             Cmd = [ "site-server" ];
             WorkingDir = "${site-server}/bin";
             # we provide the env variables that we get from Cargo.toml during
-            #   development these can be overridden when the container is run,
+            #   development. these can be overridden when the container is run,
             #   but defaults are needed
             Env = [
               "LEPTOS_OUTPUT_NAME=${leptos-options.name}"
@@ -240,13 +242,17 @@
             toolchain # cargo and such from crane
             just # command recipes
             dive # docker images
-            cargo-leptos # main leptos build tool
             diesel-cli
             flyctl # fly.io
             bacon # cargo check w/ hot reload
             cargo-deny # license checking
             yarn # interacting with style deps
             cargo-nextest # rust testing
+
+            cargo-leptos # main leptos build tool
+            # used by cargo-leptos for styling
+            dart-sass
+            tailwindcss
 
             # surreal stuff
             surrealdb
