@@ -1,4 +1,5 @@
 mod components;
+mod error_template;
 mod functions;
 mod helpers;
 mod pages;
@@ -24,7 +25,14 @@ pub fn App() -> impl IntoView {
     <Meta name="description" content="A hub for Oral Mother Tongue translations of the bible"/>
 
     <crate::components::PageWrapper>
-      <Router trailing_slash=leptos_router::TrailingSlash::Redirect>
+      <Router
+        trailing_slash=leptos_router::TrailingSlash::Redirect
+        fallback=|| {
+          let mut outside_errors = Errors::default();
+          outside_errors.insert_with_default_key(error_template::AppError::NotFound);
+          view! { <error_template::ErrorTemplate outside_errors/> }.into_view()
+        }
+      >
         <Routes>
           <Route path="/" view=crate::pages::homepage::HomePage />
           <Route path="/all-translations" view=crate::pages::all_translations::AllTranslationsPage />

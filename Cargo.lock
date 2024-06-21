@@ -4482,14 +4482,17 @@ name = "site-app"
 version = "0.1.0"
 dependencies = [
  "auth",
+ "cfg-if",
  "core_types",
  "db",
  "eyre",
+ "http 1.1.0",
  "leptos",
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
  "serde",
+ "thiserror",
  "time",
  "tokio",
  "tower-sessions",
