@@ -8,7 +8,7 @@ use axum::{
   routing::get,
   Router,
 };
-use color_eyre::eyre::Result;
+use color_eyre::eyre::{Context, Result};
 use leptos::*;
 use leptos_axum::{
   generate_route_list, handle_server_fns_with_context, LeptosRoutes,
@@ -17,6 +17,7 @@ use leptos_router::RouteListing;
 use site_app::App;
 use tower::ServiceBuilder;
 use tower_http::compression::CompressionLayer;
+use tracing_subscriber::prelude::*;
 
 use self::fileserv::file_and_error_handler;
 
@@ -73,23 +74,32 @@ async fn leptos_routes_handler(
 async fn main() -> Result<()> {
   color_eyre::install().expect("Failed to install color_eyre");
 
-  let filter = tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or(
-    tracing_subscriber::EnvFilter::new("info,site_server=debug,site_app=debug"),
-  );
-
   #[cfg(not(feature = "chrome-tracing"))]
   {
-    tracing_subscriber::fmt().with_env_filter(filter).init();
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+      .unwrap_or(tracing_subscriber::EnvFilter::new(
+        "info,site_server=debug,site_app=debug",
+      ));
+    let error_layer = tracing_error::ErrorLayer::default();
+    tracing_subscriber::registry()
+      .with(filter)
+      .with(error_layer)
+      .with(tracing_subscriber::fmt::layer())
+      .init();
   }
   #[cfg(feature = "chrome-tracing")]
   let guard = {
-    use tracing_subscriber::prelude::*;
-
     let (chrome_layer, guard) =
       tracing_chrome::ChromeLayerBuilder::new().build();
     tracing_subscriber::registry().with(chrome_layer).init();
     guard
   };
+
+  let db = db::DbConnection::new().await?;
+  db.run_migrations()
+    .await
+    .wrap_err("failed to run db migrations")?;
+  log::info!("ran migrations");
 
   // Setting get_configuration(None) means we'll be using cargo-leptos's env
   // values For deployment these variables are:
@@ -104,7 +114,7 @@ async fn main() -> Result<()> {
   let state = AppState {
     leptos_options,
     routes: routes.clone(),
-    db: db::DbConnection::new().await?,
+    db,
   };
 
   let auth_layer = auth::build_auth_layer().await?;
@@ -129,6 +139,9 @@ async fn main() -> Result<()> {
   log::info!("listening on http://{}", &addr);
   let socket = tokio::net::TcpListener::bind(&addr).await.unwrap();
   axum::serve(socket, app).await.unwrap();
+
+  #[cfg(feature = "chrome-tracing")]
+  drop(guard);
 
   Ok(())
 }

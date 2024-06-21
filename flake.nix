@@ -195,6 +195,9 @@
             cargoClippyExtraArgs = "-p site-frontend -- --deny warnings";
           });
 
+          # make sure the container builds
+          container-builds = site-server-container;
+
           # make sure the docs build
           site-server-doc = craneLib.cargoDoc (common-args // {
             cargoArtifacts = site-server-deps;
@@ -202,16 +205,13 @@
 
           # check formatting
           site-server-fmt = craneLib.cargoFmt {
-            pname = common-args.pname;
-            version = common-args.version;
-            
+            inherit (common-args) pname version;
             inherit src;
           };
 
           # audit licenses
           site-server-deny = craneLib.cargoDeny {
-            pname = common-args.pname;
-            version = common-args.version;
+            inherit (common-args) pname version;
             inherit src;
           };
 
@@ -241,6 +241,7 @@
             bacon # cargo check w/ hot reload
             cargo-deny # license checking
             yarn # interacting with style deps
+            cargo-nextest # rust testing
 
             # surreal stuff
             surrealdb

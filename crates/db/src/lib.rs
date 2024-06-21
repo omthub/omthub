@@ -2,11 +2,20 @@ use std::sync::Arc;
 
 use core_types::{MOTHER_TONGUE_TABLE, USER_TABLE};
 use eyre::{Context, Result};
+use include_dir::{include_dir, Dir};
+use serde::Deserialize;
 pub use surrealdb::{
   engine::remote::ws::Client as WsClient, Error as SurrealError,
   Result as SurrealResult,
 };
 use surrealdb::{engine::remote::ws::Ws, opt::auth::Root, Surreal};
+
+const MIGRATIONS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/migrations");
+
+#[derive(Deserialize)]
+pub struct Count {
+  pub count: usize,
+}
 
 #[derive(Clone, Debug)]
 pub struct DbConnection(Arc<Surreal<WsClient>>);
@@ -83,28 +92,58 @@ impl DbConnection {
     term: Option<String>,
     offset: u32,
     count: u32,
-  ) -> SurrealResult<Vec<core_types::MotherTongue>> {
-    if let Some(term) = term {
-      let query = format!(
-        "SELECT * FROM {MOTHER_TONGUE_TABLE} WHERE \
-         (string::contains(string::lowercase(name), $term) || \
-         string::contains(string::lowercase(description), $term)) LIMIT \
-         {count} START {offset}"
+  ) -> SurrealResult<(Vec<core_types::MotherTongue>, usize)> {
+    let mut query = if let Some(term) = term {
+      let where_clause = "WHERE name @0@ $term || description @1@ $term";
+
+      let count_query = format!(
+        "SELECT count() FROM {MOTHER_TONGUE_TABLE} {where_clause} GROUP all"
       );
-      tracing::info!("query = {query:?}");
+      let content_query = format!(
+        "SELECT *, search::score(0) * 2 + search::score(1) * 1 AS relevance \
+         FROM {MOTHER_TONGUE_TABLE} {where_clause} ORDER BY relevance DESC \
+         LIMIT {count} START {offset}"
+      );
+
       self
         .use_main()
         .await?
-        .query(query)
+        .query(count_query)
+        .query(content_query)
         .bind(("term", term.to_lowercase()))
         .await?
-        .take(0)
     } else {
-      let query = format!(
+      let count_query =
+        format!("SELECT count() FROM {MOTHER_TONGUE_TABLE} GROUP all");
+      let content_query = format!(
         "SELECT * FROM {MOTHER_TONGUE_TABLE} LIMIT {count} START {offset}"
       );
-      tracing::info!("query = {query:?}");
-      self.use_main().await?.query(query).await?.take(0)
-    }
+
+      self
+        .use_main()
+        .await?
+        .query(count_query)
+        .query(content_query)
+        .await?
+    };
+
+    let count: Option<Count> = query.take(0)?;
+    let content: Vec<core_types::MotherTongue> = query.take(1)?;
+    // we can reasonably always expect surreal to return this bc of the GROUP
+    let count = count.map(|c| c.count).unwrap_or(0);
+
+    Ok((content, count))
+  }
+
+  #[tracing::instrument(skip(self))]
+  pub async fn run_migrations(&self) -> Result<()> {
+    let db = self.use_main().await?;
+
+    surrealdb_migrations::MigrationRunner::new(db)
+      .load_files(&MIGRATIONS_DIR)
+      .up()
+      .await?;
+
+    Ok(())
   }
 }

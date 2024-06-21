@@ -1,55 +1,83 @@
 use leptos::*;
 
-use crate::functions::fetch::fetch_all_mother_tongues;
+use crate::{
+  components::pagination::Pagination,
+  functions::fetch::fetch_all_mother_tongues,
+};
+
+const DEFAULT_FETCH_LIMIT: usize = 10;
 
 #[island]
 pub fn MotherTonguesTable() -> impl IntoView {
   let (query_term, set_query_term) = create_signal(String::new());
-  let (offset, _set_offset) = create_signal(0_u32);
+  let (current_page, set_current_page) = create_signal(0_u32);
   let tongues = create_resource(
     move || {
-      with!(|query_term, offset| {
+      with!(|query_term, current_page| {
         let term = if query_term.is_empty() {
           None
         } else {
           Some(query_term)
         };
-        (term.cloned(), *offset, 25)
+        (
+          term.cloned(),
+          *current_page * DEFAULT_FETCH_LIMIT as u32,
+          DEFAULT_FETCH_LIMIT as _,
+        )
       })
     },
     move |(term, offset, count)| fetch_all_mother_tongues(term, offset, count),
   );
 
-  view! {
-    <div class="flex flex-row gap-4 items-center">
-      <input class="input" placeholder="Search..."
-        on:input=move |ev| set_query_term(event_target_value(&ev))
-        prop:value=query_term
-      />
-      <div class="flex-1" />
-    </div>
-    <InnerMotherTonguesTable>
-      <Transition fallback=SuspenseMotherTonguesTable>
-        {move || tongues().map(|data| match data {
-          Ok(data) => view! {
+  let table_element = move || {
+    tongues().map(|d| match d {
+      Ok((data, count)) => {
+        let page_count =
+          (count as f32 / DEFAULT_FETCH_LIMIT as f32).ceil() as u32;
+        view! {
+          <InnerMotherTonguesTable>
             <tbody>
               <For
                 each=move || data.clone() key={|t| t.id}
                 children={ move |d| view! { <MotherTonguesTableRow d={d} /> } }
               />
             </tbody>
-          },
-          Err(_) => todo!(),
-        })}
+          </InnerMotherTonguesTable>
+          <Pagination class="self-center"
+            total_pages={page_count.into()}
+            current_page={current_page.into()}
+            set_page=set_current_page
+          />
+        }
+        .into_view()
+      }
+      Err(_) => view! {
+        <p>"Something went wrong. We apologize. Try reloading the page."</p>
+      }
+      .into_view(),
+    })
+  };
+
+  view! {
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-row gap-4 items-center">
+        <input class="input" placeholder="Search..."
+          on:input=move |ev| set_query_term(event_target_value(&ev))
+          prop:value=query_term
+        />
+        <div class="flex-1" />
+      </div>
+      <Transition fallback=SuspenseMotherTonguesTable>
+        { table_element }
       </Transition>
-    </InnerMotherTonguesTable>
+    </div>
   }
 }
 
 #[component]
 fn Tooltip(tooltip: String, children: Children) -> impl IntoView {
   view! {
-    <span class="tooltip tooltip-bottom max-w-32" data-tooltip={ tooltip }>
+    <span class="tooltip tooltip-top max-w-32" data-tooltip={ tooltip }>
       { children() }
     </span>
   }
@@ -78,8 +106,10 @@ fn InnerMotherTonguesTable(children: Children) -> impl IntoView {
   view! {
     <table class="table max-w-full">
       <thead>
-        <th>"Name"</th>
-        <th>"Description"</th>
+        <tr>
+          <th class="w-64">"Name"</th>
+          <th>"Description"</th>
+        </tr>
       </thead>
       { children() }
     </table>
@@ -89,19 +119,15 @@ fn InnerMotherTonguesTable(children: Children) -> impl IntoView {
 #[component]
 fn SuspenseMotherTonguesTable() -> impl IntoView {
   view! {
-    <tbody>
-      <tr>
-        <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
-        <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
-      </tr>
-      <tr>
-        <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
-        <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
-      </tr>
-      <tr>
-        <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
-        <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
-      </tr>
-    </tbody>
+    <InnerMotherTonguesTable>
+      <tbody>
+        { (0..DEFAULT_FETCH_LIMIT).map(|_| view! {
+          <tr>
+            <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
+            <td><div class="skeleton-pulse h-5 rounded-md"></div></td>
+          </tr>
+        }).collect_view() }
+      </tbody>
+    </InnerMotherTonguesTable>
   }
 }
