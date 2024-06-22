@@ -1,4 +1,5 @@
 pub mod logout;
+pub mod mini_pages;
 pub mod mother_tongues_table;
 pub mod navbar;
 pub mod pagination;
