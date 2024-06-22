@@ -9,3 +9,13 @@ pub fn BadLinkError() -> impl IntoView {
     </p>
   }
 }
+
+#[component]
+pub fn MissingResourceError() -> impl IntoView {
+  view! {
+    <p class="text-4xl tracking-tight semi-bold">"Oops! Something went wrong."</p>
+    <p class="text-content2">
+      "It looks like that resource doesn't exist."
+    </p>
+  }
+}

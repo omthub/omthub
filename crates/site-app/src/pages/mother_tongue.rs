@@ -2,7 +2,8 @@ use leptos::*;
 use leptos_router::use_params_map;
 
 use crate::{
-  components::mini_pages::BadLinkError, functions::fetch::fetch_mother_tongue,
+  components::mini_pages::{BadLinkError, MissingResourceError},
+  functions::fetch::fetch_mother_tongue,
 };
 
 #[component]
@@ -39,11 +40,17 @@ fn MotherTongueFetcher(id: core_types::MotherTongueRecordId) -> impl IntoView {
   view! {
     <Suspense fallback={move || view! { <p>"Loading..."</p> }}>
       { move || mother_tongue().map(|data| match data {
-        Ok(tongue) => view! {
-          <p>{ format!("tongue: {tongue:?}") }</p>
-        }.into_view(),
+        Ok(Some(data)) => view! { <MotherTongueData data=data /> }.into_view(),
+        Ok(None) => view! { <MissingResourceError /> }.into_view(),
         Err(e) => view! { <p>{ format!("failed to fetch mother tongue: {e}") }</p> }.into_view(),
       }) }
     </Suspense>
+  }
+}
+
+#[component]
+fn MotherTongueData(data: core_types::MotherTongue) -> impl IntoView {
+  view! {
+    <p>{ format!("{:?}", data) }</p>
   }
 }
