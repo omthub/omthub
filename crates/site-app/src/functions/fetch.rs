@@ -6,11 +6,15 @@ use leptos::*;
 use crate::functions::handle_error;
 
 #[cfg(feature = "ssr")]
+#[tracing::instrument]
 async fn use_db() -> Result<db::DbConnection> {
   Ok(if let Some(db) = use_context::<db::DbConnection>() {
+    tracing::debug!("got db connection from context");
     db
   } else {
-    // logging::log!("starting new db client");
+    tracing::warn!(
+      "started new db connection because it was missing from server fn context"
+    );
     db::DbConnection::new()
       .await
       .wrap_err("failed to start db client")?
