@@ -87,8 +87,10 @@ fn MotherTonguesTableRow(d: core_types::MotherTongue) -> impl IntoView {
   view! {
     <tr>
       <th class="truncate">
-          { d.name }
         // <Tooltip tooltip={ d.name.clone() }>
+          <a class="underline hover:no-underline" href={ format!("/tongue/{}", d.id.0) }>
+            { d.name }
+          </a>
         // </Tooltip>
       </th>
       <td class="truncate">
