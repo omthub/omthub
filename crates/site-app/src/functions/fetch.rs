@@ -1,9 +1,21 @@
 #[cfg(feature = "ssr")]
-use eyre::Context;
+use eyre::{Context, Result};
 use leptos::*;
 
 #[cfg(feature = "ssr")]
 use crate::functions::handle_error;
+
+#[cfg(feature = "ssr")]
+async fn use_db() -> Result<db::DbConnection> {
+  Ok(if let Some(db) = use_context::<db::DbConnection>() {
+    db
+  } else {
+    // logging::log!("starting new db client");
+    db::DbConnection::new()
+      .await
+      .wrap_err("failed to start db client")?
+  })
+}
 
 #[server]
 #[cfg_attr(feature = "ssr", tracing::instrument)]
@@ -13,7 +25,7 @@ pub async fn fetch_mother_tongues(
   count: u32,
 ) -> Result<(Vec<core_types::MotherTongue>, usize), ServerFnError> {
   async move {
-    let db: db::DbConnection = expect_context();
+    let db = use_db().await?;
     let tongues = db
       .select_mother_tongues(term, offset, count)
       .await
@@ -31,7 +43,7 @@ pub async fn fetch_mother_tongue(
   id: core_types::MotherTongueRecordId,
 ) -> Result<Option<core_types::MotherTongue>, ServerFnError> {
   async move {
-    let db: db::DbConnection = expect_context();
+    let db = use_db().await?;
     let tongue = db
       .select_mother_tongue(id)
       .await
