@@ -87,6 +87,14 @@ impl DbConnection {
   }
 
   #[tracing::instrument(skip(self))]
+  pub async fn select_mother_tongue(
+    &self,
+    id: core_types::MotherTongueRecordId,
+  ) -> SurrealResult<Option<core_types::MotherTongue>> {
+    self.use_main().await?.select(id).await
+  }
+
+  #[tracing::instrument(skip(self))]
   pub async fn select_mother_tongues(
     &self,
     term: Option<String>,
