@@ -7,7 +7,7 @@ use crate::functions::handle_error;
 
 #[server]
 #[cfg_attr(feature = "ssr", tracing::instrument)]
-pub async fn fetch_all_mother_tongues(
+pub async fn fetch_mother_tongues(
   term: Option<String>,
   offset: u32,
   count: u32,

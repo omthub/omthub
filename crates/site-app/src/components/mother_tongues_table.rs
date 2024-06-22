@@ -1,8 +1,7 @@
 use leptos::*;
 
 use crate::{
-  components::pagination::Pagination,
-  functions::fetch::fetch_all_mother_tongues,
+  components::pagination::Pagination, functions::fetch::fetch_mother_tongues,
 };
 
 const DEFAULT_FETCH_LIMIT: usize = 10;
@@ -26,7 +25,7 @@ pub fn MotherTonguesTable() -> impl IntoView {
         )
       })
     },
-    move |(term, offset, count)| fetch_all_mother_tongues(term, offset, count),
+    move |(term, offset, count)| fetch_mother_tongues(term, offset, count),
   );
 
   let table_element = move || {
