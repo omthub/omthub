@@ -194,8 +194,8 @@ pub fn LoginPage() -> impl IntoView {
 
             <div class="form-field">
               <div class="form-control justify-center">
-                <Link target=LinkTarget::Login class="link link-underline link-primary text-sm">
-                  "Already have an account? Log in."
+                <Link target=LinkTarget::Signup class="link link-underline link-primary text-sm">
+                  "Don't have an account? Sign up."
                 </Link>
               </div>
             </div>
