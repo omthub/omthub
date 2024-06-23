@@ -26,6 +26,7 @@ pub fn OmtHub() -> impl IntoView {
   }
 }
 
+#[allow(dead_code)]
 #[derive(Clone)]
 pub enum LinkTarget {
   Home,

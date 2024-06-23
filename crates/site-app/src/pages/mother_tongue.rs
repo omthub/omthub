@@ -12,15 +12,11 @@ pub fn MotherTonguePage() -> impl IntoView {
 
   let id = move || {
     with!(|params| {
-      params
-        .get("id")
-        .cloned()
-        .map(|s| {
-          s.parse::<core_types::Ulid>()
-            .map(core_types::MotherTongueRecordId)
-            .ok()
-        })
-        .flatten()
+      params.get("id").cloned().and_then(|s| {
+        s.parse::<core_types::Ulid>()
+          .map(core_types::MotherTongueRecordId)
+          .ok()
+      })
     })
   };
 
@@ -34,8 +30,7 @@ pub fn MotherTonguePage() -> impl IntoView {
 
 #[component]
 fn MotherTongueFetcher(id: core_types::MotherTongueRecordId) -> impl IntoView {
-  let mother_tongue =
-    create_resource(move || id, move |id| fetch_mother_tongue(id));
+  let mother_tongue = create_resource(move || id, fetch_mother_tongue);
 
   view! {
     <Suspense fallback={move || view! { <p>"Loading..."</p> }}>
