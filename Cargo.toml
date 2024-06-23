@@ -35,7 +35,10 @@ surrealdb = { version = "1", features = [ "protocol-ws" ] }
 time = { version = "0.3" }
 tokio = { version = "1", features = ["full"] }
 tower = { version = "0.4", features = ["full"] }
-tower-http = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.5", features = [
+  "fs", "compression-br", "compression-deflate", "compression-gzip",
+  "compression-zstd",
+] }
 tower-sessions = { version = "0.12" }
 wasm-bindgen = "=0.2.92"
 web-sys = { version = "0.3", features = [ "Window" ] }
