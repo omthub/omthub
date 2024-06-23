@@ -152,7 +152,7 @@ pub fn LoginPage() -> impl IntoView {
                   }
                   prop:checked=remember
                 />
-                <a href="#">"Remember me"</a>
+                <p>"Remember me"</p>
               </div>
             </div>
 
@@ -194,9 +194,9 @@ pub fn LoginPage() -> impl IntoView {
 
             <div class="form-field">
               <div class="form-control justify-center">
-                <a href="/auth/login" class="link link-underline link-primary text-sm">
+                <Link target=LinkTarget::Login class="link link-underline link-primary text-sm">
                   "Already have an account? Log in."
-                </a>
+                </Link>
               </div>
             </div>
           </div>
