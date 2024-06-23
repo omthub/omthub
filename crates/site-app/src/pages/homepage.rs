@@ -14,9 +14,9 @@ pub fn HomePage() -> impl IntoView {
         <span class="text-primary">"mother tongue"</span>
         "."
       </p>
-      <a href="/all-translations" class="btn btn-lg btn-primary">
+      <Link target=LinkTarget::AllTranslations class="btn btn-lg btn-primary">
         "Get Started Now"
-      </a>
+      </Link>
     </div>
   }
 }

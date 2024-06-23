@@ -13,6 +13,9 @@ leptos_router.workspace = true
 leptos_axum = { workspace = true, optional = true }
 
 serde.workspace = true
+thiserror.workspace = true
+http.workspace = true
+cfg-if.workspace = true
 core_types = { path = "../core_types" }
 
 auth = { path = "../auth", optional = true }

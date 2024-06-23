@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "cargo-leptos-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1712066046,
-        "narHash": "sha256-W08R1ny4LyzWehnsWSMCRjCxmvV0k7ARVbmZ740hg8w=",
-        "owner": "leptos-rs",
-        "repo": "cargo-leptos",
-        "rev": "148c13affd7bc47238288ab42d7805d2c6ea219a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "leptos-rs",
-        "repo": "cargo-leptos",
-        "type": "github"
-      }
-    },
     "crane": {
       "inputs": {
         "nixpkgs": [
@@ -103,7 +87,6 @@
     },
     "root": {
       "inputs": {
-        "cargo-leptos-src": "cargo-leptos-src",
         "crane": "crane",
         "flake-utils": "flake-utils",
         "nix-filter": "nix-filter",

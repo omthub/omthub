@@ -2,7 +2,7 @@
 
 use leptos::*;
 
-use crate::components::logout::Logout;
+use crate::components::{logout::Logout, Link, LinkTarget};
 
 #[component]
 pub fn NavBar() -> impl IntoView {
@@ -12,9 +12,9 @@ pub fn NavBar() -> impl IntoView {
     <div class="navbar navbar-sticky navbar-glass border-gray-6 border-b h-14 shadow-none">
       <div class="container mx-auto h-full flex flex-row">
         <div class="navbar-start">
-          <a href="/" class="navbar-item font-semibold"><super::OmtHub/></a>
-          <a href="/" class="navbar-item">"Home"</a>
-          <a href="/all-translations" class="navbar-item">"All Translations"</a>
+          <Link target=LinkTarget::Home class="navbar-item font-semibold"><super::OmtHub/></Link>
+          <Link target=LinkTarget::Home class="navbar-item">"Home"</Link>
+          <Link target=LinkTarget::AllTranslations class="navbar-item">"All Translations"</Link>
         </div>
         <div class="navbar-end">
           { match user.0 {
@@ -22,8 +22,8 @@ pub fn NavBar() -> impl IntoView {
               <AccountDropdown user=user />
             }.into_view(),
             None => view! {
-              <a href="/auth/signup" class="navbar-item">"Sign Up"</a>
-              <a href="/auth/login" class="navbar-item">"Log In"</a>
+              <Link target=LinkTarget::Signup class="navbar-item">"Sign Up"</Link>
+              <Link target=LinkTarget::Login class="navbar-item">"Log In"</Link>
             }.into_view(),
           }}
         </div>
@@ -52,10 +52,10 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
     <div class="dropdown">
       <label class="btn btn-rounded" tabindex="0">{ user.name }</label>
       <div class="dropdown-menu dropdown-menu-bottom-left border border-border">
-        <a href="/account" class="dropdown-item flex flex-row gap-2 items-center">
+        <Link target=LinkTarget::Account class="dropdown-item flex flex-row gap-2 items-center">
           <HeroIconsUserCircle />
           <p class="text-sm">"Account"</p>
-        </a>
+        </Link>
         <button
           class="dropdown-item flex flex-row gap-2 items-center"
           on:click=move |_| { logout_action.dispatch(Logout {}); }

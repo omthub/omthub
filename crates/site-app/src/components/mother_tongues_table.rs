@@ -1,8 +1,7 @@
 use leptos::*;
 
 use crate::{
-  components::pagination::Pagination,
-  functions::fetch::fetch_all_mother_tongues,
+  components::pagination::Pagination, functions::fetch::fetch_mother_tongues,
 };
 
 const DEFAULT_FETCH_LIMIT: usize = 10;
@@ -26,7 +25,7 @@ pub fn MotherTonguesTable() -> impl IntoView {
         )
       })
     },
-    move |(term, offset, count)| fetch_all_mother_tongues(term, offset, count),
+    move |(term, offset, count)| fetch_mother_tongues(term, offset, count),
   );
 
   let table_element = move || {
@@ -88,14 +87,16 @@ fn MotherTonguesTableRow(d: core_types::MotherTongue) -> impl IntoView {
   view! {
     <tr>
       <th class="truncate">
-        <Tooltip tooltip={ d.name.clone() }>
-          { d.name }
-        </Tooltip>
+        // <Tooltip tooltip={ d.name.clone() }>
+          <a class="underline hover:no-underline" href={ format!("/tongue/{}", d.id.0) }>
+            { d.name }
+          </a>
+        // </Tooltip>
       </th>
       <td class="truncate">
-        <Tooltip tooltip={ d.description.clone() }>
+        // <Tooltip tooltip={ d.description.clone() }>
           { d.description }
-        </Tooltip>
+        // </Tooltip>
       </td>
     </tr>
   }

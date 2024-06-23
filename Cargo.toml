@@ -20,6 +20,7 @@ tracing = { version = "0.1" }
 eyre = { version = "0.6" }
 color-eyre = "0.6"
 thiserror = { version = "1" }
+cfg-if = { version = "1" }
 
 serde = { version = "1", features = [ "derive" ] }
 
@@ -28,6 +29,7 @@ axum = { version = "0.7", features = ["macros", "tracing"] }
 bytes = { version = "1" }
 console_error_panic_hook = "0.1"
 console_log = "1"
+http = { version = "1" }
 log = "0.4"
 surrealdb = { version = "1", features = [ "protocol-ws" ] }
 time = { version = "0.3" }
