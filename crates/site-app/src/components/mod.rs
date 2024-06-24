@@ -34,7 +34,7 @@ pub enum LinkTarget {
   Signup,
   Account,
   MotherTongue(core_types::MotherTongueRecordId),
-  AllTranslations,
+  AllTongues,
   External(String),
 }
 
@@ -46,7 +46,7 @@ impl LinkTarget {
       LinkTarget::Signup => "/auth/signup".to_owned(),
       LinkTarget::Account => "/account".to_owned(),
       LinkTarget::MotherTongue(id) => format!("/tongue/{}", id.0),
-      LinkTarget::AllTranslations => "/all-translations".to_owned(),
+      LinkTarget::AllTongues => "/all-tongues".to_owned(),
       LinkTarget::External(href) => href.to_owned(),
     }
   }
