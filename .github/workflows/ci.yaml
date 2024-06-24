@@ -13,7 +13,6 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
       - name: Verify flake inputs
         uses: DeterminateSystems/flake-checker-action@main
-      - name: Run flake checks
       - name: Use Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Build dependencies
