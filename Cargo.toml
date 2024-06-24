@@ -32,7 +32,7 @@ console_log = "1"
 http = { version = "1" }
 log = "0.4"
 surrealdb = { version = "1", features = [ "protocol-ws" ] }
-time = { version = "0.3" }
+time = { version = "0.3", features = [ "parsing", "formatting" ] }
 tokio = { version = "1", features = ["full"] }
 tower = { version = "0.4", features = ["full"] }
 tower-http = { version = "0.5", features = [

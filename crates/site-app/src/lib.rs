@@ -33,6 +33,24 @@ impl LinkTarget {
     }
   }
 
+  pub fn full_chain(&self) -> Vec<Self> {
+    match self {
+      LinkTarget::Home => vec![LinkTarget::Home],
+      LinkTarget::Login => vec![LinkTarget::Home, LinkTarget::Login],
+      LinkTarget::Signup => vec![LinkTarget::Home, LinkTarget::Signup],
+      LinkTarget::Account => vec![LinkTarget::Home, LinkTarget::Account],
+      LinkTarget::MotherTongue(id) => vec![
+        LinkTarget::Home,
+        LinkTarget::AllTongues,
+        LinkTarget::MotherTongue(*id),
+      ],
+      LinkTarget::AllTongues => vec![LinkTarget::Home, LinkTarget::AllTongues],
+      LinkTarget::External(_) => {
+        unimplemented!("cannot calculate link chain for eternal link")
+      }
+    }
+  }
+
   pub fn new_tab(&self) -> bool { matches!(self, LinkTarget::External(_)) }
 }
 
