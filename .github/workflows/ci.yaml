@@ -5,44 +5,22 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-and-check:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            keep-outputs = true
-            keep-derivations = true
+      - name: Verify flake inputs
+        uses: DeterminateSystems/flake-checker-action@main
       - name: Use Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Build server package
+      - name: Build dependencies
         run: nix build ".#deps-only" -L
+      - name: Run checks
+        run: nix flake check -L
       - name: Build server package
         run: nix build ".#container" -L
-
-  flake-check:
-    runs-on: ubuntu-22.04
-    needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [ "app-hydrate-clippy", "app-ssr-clippy", "site-server-clippy", "site-frontend-clippy", "site-server-doc", "site-server-fmt", "site-server-deny", "site-server-nextest" ]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            keep-outputs = true
-            keep-derivations = true
-      - name: Use Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Check flake inputs
-        uses: DeterminateSystems/flake-checker-action@main
-      - name: Run flake checks
-        run: nix build "./#checks.x86_64-linux.${{ matrix.check }}" -L
 
   fly-check:
     runs-on: ubuntu-22.04
