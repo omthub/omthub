@@ -15,8 +15,8 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
-            keep-outputs = true
-            keep-derivations = true
+            extra-trusted-public-keys = surrealdb.cachix.org-1:rbm7Qs+s36pxbfk9jhIa5HRld6gZ63koZz1h/9sSxaA=
+            extra-trusted-substituters = https://surrealdb.cachix.org"
       - name: Use Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Install flyctl
