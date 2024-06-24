@@ -1,7 +1,7 @@
 use leptos::*;
 use leptos_router::Redirect;
 
-use crate::helpers::get_auth_context;
+use crate::{components::BreadCrumbs, helpers::get_auth_context, LinkTarget};
 
 #[component]
 pub fn AccountPage() -> impl IntoView {
@@ -12,6 +12,7 @@ pub fn AccountPage() -> impl IntoView {
   };
 
   view! {
+    <BreadCrumbs target=LinkTarget::Account />
     <div class="flex flex-col p-8 gap-4">
       <p class="text-5xl tracking-tight font-semibold">
         "User Account"

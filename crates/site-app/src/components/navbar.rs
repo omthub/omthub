@@ -2,7 +2,10 @@
 
 use leptos::*;
 
-use crate::components::{logout::Logout, Link, LinkTarget};
+use crate::{
+  components::{logout::Logout, Link},
+  LinkTarget,
+};
 
 #[component]
 pub fn NavBar() -> impl IntoView {
@@ -13,8 +16,8 @@ pub fn NavBar() -> impl IntoView {
       <div class="container mx-auto h-full flex flex-row">
         <div class="navbar-start">
           <Link target=LinkTarget::Home class="navbar-item font-semibold"><super::OmtHub/></Link>
-          <Link target=LinkTarget::Home class="navbar-item">"Home"</Link>
-          <Link target=LinkTarget::AllTongues class="navbar-item">"All Translations"</Link>
+          <Link target=LinkTarget::Home class="navbar-item">{ LinkTarget::Home.name() }</Link>
+          <Link target=LinkTarget::AllTongues class="navbar-item">{ LinkTarget::AllTongues.name() }</Link>
         </div>
         <div class="navbar-end">
           { match user.0 {
@@ -22,8 +25,8 @@ pub fn NavBar() -> impl IntoView {
               <AccountDropdown user=user />
             }.into_view(),
             None => view! {
-              <Link target=LinkTarget::Signup class="navbar-item">"Sign Up"</Link>
-              <Link target=LinkTarget::Login class="navbar-item">"Log In"</Link>
+              <Link target=LinkTarget::Signup class="navbar-item">{ LinkTarget::Signup.name() }</Link>
+              <Link target=LinkTarget::Login class="navbar-item">{ LinkTarget::Login.name() }</Link>
             }.into_view(),
           }}
         </div>
@@ -54,7 +57,7 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
       <div class="dropdown-menu dropdown-menu-bottom-left border border-border">
         <Link target=LinkTarget::Account class="dropdown-item flex flex-row gap-2 items-center">
           <HeroIconsUserCircle />
-          <p class="text-sm">"Account"</p>
+          <p class="text-sm">{ LinkTarget::Account.name() }</p>
         </Link>
         <button
           class="dropdown-item flex flex-row gap-2 items-center"

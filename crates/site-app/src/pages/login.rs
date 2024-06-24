@@ -11,9 +11,10 @@ pub enum DispatchState {
 }
 
 use crate::{
-  components::*,
+  components::{BreadCrumbs, *},
   functions::auth::{Login, LoginParams},
   helpers::navigation::navigate_to,
+  LinkTarget,
 };
 
 #[island]
@@ -98,6 +99,7 @@ pub fn LoginPage() -> impl IntoView {
     move || matches!(dispatch_state(), DispatchState::Pending);
 
   view! {
+    <BreadCrumbs target=LinkTarget::Login />
     <div class="flex-1 flex flex-col p-8 gap-4 justify-center items-center">
       <div class="card border border-border">
         <div class="card-body gap-4">

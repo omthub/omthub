@@ -2,8 +2,12 @@ use leptos::*;
 use leptos_router::use_params_map;
 
 use crate::{
-  components::mini_pages::{BadLinkError, MissingResourceError},
+  components::{
+    mini_pages::{BadLinkError, MissingResourceError},
+    BreadCrumbs,
+  },
   functions::fetch::fetch_mother_tongue,
+  LinkTarget,
 };
 
 #[component]
@@ -33,6 +37,7 @@ fn MotherTongueFetcher(id: core_types::MotherTongueRecordId) -> impl IntoView {
   let mother_tongue = create_resource(move || id, fetch_mother_tongue);
 
   view! {
+    <BreadCrumbs target=LinkTarget::MotherTongue(id) />
     <Suspense fallback={move || view! { <p>"Loading..."</p> }}>
       { move || mother_tongue().map(|data| match data {
         Ok(Some(data)) => view! { <MotherTongueData data=data /> }.into_view(),

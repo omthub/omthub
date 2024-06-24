@@ -1,6 +1,6 @@
 use leptos::*;
 
-use crate::components::*;
+use crate::{components::*, LinkTarget};
 
 #[component]
 pub fn HomePage() -> impl IntoView {

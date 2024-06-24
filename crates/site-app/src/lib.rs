@@ -8,6 +8,66 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::{Route, Router, Routes};
 
+#[allow(dead_code)]
+#[derive(Clone)]
+pub enum LinkTarget {
+  Home,
+  Login,
+  Signup,
+  Account,
+  MotherTongue(core_types::MotherTongueRecordId),
+  AllTongues,
+  External(String),
+}
+
+impl LinkTarget {
+  pub fn href(&self) -> String {
+    match self {
+      LinkTarget::Home => "/".to_owned(),
+      LinkTarget::Login => "/auth/login".to_owned(),
+      LinkTarget::Signup => "/auth/signup".to_owned(),
+      LinkTarget::Account => "/account".to_owned(),
+      LinkTarget::MotherTongue(id) => format!("/tongue/{}", id.0),
+      LinkTarget::AllTongues => "/all-tongues".to_owned(),
+      LinkTarget::External(href) => href.to_owned(),
+    }
+  }
+
+  pub fn full_chain(&self) -> Vec<Self> {
+    match self {
+      LinkTarget::Home => vec![LinkTarget::Home],
+      LinkTarget::Login => vec![LinkTarget::Home, LinkTarget::Login],
+      LinkTarget::Signup => vec![LinkTarget::Home, LinkTarget::Signup],
+      LinkTarget::Account => vec![LinkTarget::Home, LinkTarget::Account],
+      LinkTarget::MotherTongue(id) => vec![
+        LinkTarget::Home,
+        LinkTarget::AllTongues,
+        LinkTarget::MotherTongue(*id),
+      ],
+      LinkTarget::AllTongues => vec![LinkTarget::Home, LinkTarget::AllTongues],
+      LinkTarget::External(_) => {
+        unimplemented!("cannot calculate link chain for eternal link")
+      }
+    }
+  }
+
+  pub fn name(&self) -> &'static str {
+    match self {
+      LinkTarget::Home => "Home",
+      LinkTarget::Login => "Log In",
+      LinkTarget::Signup => "Sign Up",
+      LinkTarget::Account => "Account",
+      LinkTarget::MotherTongue(_) => "Mother Tongue",
+      LinkTarget::AllTongues => "All Tongues",
+      LinkTarget::External(_) => {
+        unimplemented!("name unknowable for external link")
+      }
+    }
+  }
+
+  pub fn new_tab(&self) -> bool { matches!(self, LinkTarget::External(_)) }
+}
+
 #[component]
 pub fn App() -> impl IntoView {
   // Provides context that manages stylesheets, titles, meta tags, etc.

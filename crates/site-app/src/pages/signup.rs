@@ -1,9 +1,10 @@
 use leptos::*;
 
 use crate::{
-  components::*,
+  components::{BreadCrumbs, *},
   functions::auth::{Signup, SignupParams},
   helpers::navigation::navigate_to,
+  LinkTarget,
 };
 
 #[derive(Clone, PartialEq)]
@@ -119,6 +120,7 @@ pub fn SignupPage() -> impl IntoView {
     move || matches!(dispatch_state(), DispatchState::Pending);
 
   view! {
+    <BreadCrumbs target=LinkTarget::Signup />
     <div class="flex-1 flex flex-col p-8 gap-4 justify-center items-center">
       <div class="card border border-border">
         <div class="card-body gap-4">

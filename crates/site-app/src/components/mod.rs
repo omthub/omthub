@@ -26,37 +26,9 @@ pub fn OmtHub() -> impl IntoView {
   }
 }
 
-#[allow(dead_code)]
-#[derive(Clone)]
-pub enum LinkTarget {
-  Home,
-  Login,
-  Signup,
-  Account,
-  MotherTongue(core_types::MotherTongueRecordId),
-  AllTongues,
-  External(String),
-}
-
-impl LinkTarget {
-  pub fn href(&self) -> String {
-    match self {
-      LinkTarget::Home => "/".to_owned(),
-      LinkTarget::Login => "/auth/login".to_owned(),
-      LinkTarget::Signup => "/auth/signup".to_owned(),
-      LinkTarget::Account => "/account".to_owned(),
-      LinkTarget::MotherTongue(id) => format!("/tongue/{}", id.0),
-      LinkTarget::AllTongues => "/all-tongues".to_owned(),
-      LinkTarget::External(href) => href.to_owned(),
-    }
-  }
-
-  pub fn new_tab(&self) -> bool { matches!(self, LinkTarget::External(_)) }
-}
-
 #[component]
 pub fn Link(
-  #[prop(into)] target: MaybeSignal<LinkTarget>,
+  #[prop(into)] target: MaybeSignal<crate::LinkTarget>,
   #[prop(optional, into)] class: MaybeProp<String>,
   #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
@@ -79,5 +51,28 @@ pub fn Link(
     <a class=class href=href target=target_attr rel=rel>
       {children.map(|c| c())}
     </a>
+  }
+}
+
+#[component]
+pub fn BreadCrumbs(#[prop(into)] target: crate::LinkTarget) -> impl IntoView {
+  let elements = target
+    .full_chain()
+    .into_iter()
+    .map(|l| {
+      view! {
+        <li>
+          <Link target={l.clone()}>{l.name()}</Link>
+        </li>
+      }
+    })
+    .collect_view();
+
+  view! {
+    <div class="breadcrumbs text-sm">
+      <ul>
+        { elements }
+      </ul>
+    </div>
   }
 }
