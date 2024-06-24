@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-and-check:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
