@@ -15,12 +15,8 @@ jobs:
         uses: DeterminateSystems/flake-checker-action@main
       - name: Use Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Build dependencies
-        run: nix build ".#deps-only" -L
       - name: Run checks
         run: nix flake check -L
-      - name: Build server package
-        run: nix build ".#container" -L
 
   fly-check:
     runs-on: ubuntu-22.04
