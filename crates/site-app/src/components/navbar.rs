@@ -14,7 +14,7 @@ pub fn NavBar() -> impl IntoView {
         <div class="navbar-start">
           <Link target=LinkTarget::Home class="navbar-item font-semibold"><super::OmtHub/></Link>
           <Link target=LinkTarget::Home class="navbar-item">"Home"</Link>
-          <Link target=LinkTarget::AllTranslations class="navbar-item">"All Translations"</Link>
+          <Link target=LinkTarget::AllTongues class="navbar-item">"All Translations"</Link>
         </div>
         <div class="navbar-end">
           { match user.0 {
