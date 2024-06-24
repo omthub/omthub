@@ -25,8 +25,8 @@ pub fn NavBar() -> impl IntoView {
               <AccountDropdown user=user />
             }.into_view(),
             None => view! {
-              <Link target=LinkTarget::Signup class="navbar-item">{ LinkTarget::Login.name() }</Link>
-              <Link target=LinkTarget::Login class="navbar-item">{ LinkTarget::Signup.name() }</Link>
+              <Link target=LinkTarget::Signup class="navbar-item">{ LinkTarget::Signup.name() }</Link>
+              <Link target=LinkTarget::Login class="navbar-item">{ LinkTarget::Login.name() }</Link>
             }.into_view(),
           }}
         </div>
