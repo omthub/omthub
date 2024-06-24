@@ -104,6 +104,7 @@ impl Backend {
       email,
       pw_hash: hash_password(&password)?,
       is_active: true,
+      registered_at: time::OffsetDateTime::now_utc(),
     };
 
     let user: Option<core_types::User> = self

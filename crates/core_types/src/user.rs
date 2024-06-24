@@ -11,11 +11,12 @@ pub struct UserRecordId(pub ulid::Ulid);
 #[cfg(feature = "ssr")]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct User {
-  pub id:        UserRecordId,
-  pub name:      String,
-  pub email:     String,
-  pub pw_hash:   String,
-  pub is_active: bool,
+  pub id:            UserRecordId,
+  pub name:          String,
+  pub email:         String,
+  pub pw_hash:       String,
+  pub is_active:     bool,
+  pub registered_at: time::OffsetDateTime,
 }
 
 #[cfg(feature = "ssr")]
