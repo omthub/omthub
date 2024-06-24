@@ -195,8 +195,11 @@
             cargoClippyExtraArgs = "-p site-frontend -- --deny warnings";
           });
 
-          # make sure the container builds
-          container-builds = site-server-container;
+          # make sure the final binary builds
+          # I used to build the container but I took it out so that the checks
+          #   didn't need to have the surrealdb package, and I don't test it
+          #   past just the binary anyways
+          binary-builds = site-server;
 
           # make sure the docs build
           site-server-doc = craneLib.cargoDoc (common-args // {
