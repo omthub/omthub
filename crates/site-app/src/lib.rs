@@ -54,8 +54,8 @@ impl LinkTarget {
   pub fn name(&self) -> &'static str {
     match self {
       LinkTarget::Home => "Home",
-      LinkTarget::Login => "Login",
-      LinkTarget::Signup => "Signup",
+      LinkTarget::Login => "Log In",
+      LinkTarget::Signup => "Sign Up",
       LinkTarget::Account => "Account",
       LinkTarget::MotherTongue(_) => "Mother Tongue",
       LinkTarget::AllTongues => "All Tongues",
