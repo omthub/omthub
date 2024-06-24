@@ -103,8 +103,8 @@ impl Backend {
       name,
       email,
       pw_hash: hash_password(&password)?,
-      meta: core_types::Meta::new(),
       is_active: true,
+      registered_at: time::OffsetDateTime::now_utc(),
     };
 
     let user: Option<core_types::User> = self
