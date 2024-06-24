@@ -53,3 +53,26 @@ pub fn Link(
     </a>
   }
 }
+
+#[component]
+pub fn BreadCrumbs(#[prop(into)] target: crate::LinkTarget) -> impl IntoView {
+  let elements = target
+    .full_chain()
+    .into_iter()
+    .map(|l| {
+      view! {
+        <li>
+          <Link target={l.clone()}>{l.name()}</Link>
+        </li>
+      }
+    })
+    .collect_view();
+
+  view! {
+    <div class="breadcrumbs text-sm">
+      <ul>
+        { elements }
+      </ul>
+    </div>
+  }
+}
