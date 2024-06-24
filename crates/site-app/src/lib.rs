@@ -8,6 +8,34 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::{Route, Router, Routes};
 
+#[allow(dead_code)]
+#[derive(Clone)]
+pub enum LinkTarget {
+  Home,
+  Login,
+  Signup,
+  Account,
+  MotherTongue(core_types::MotherTongueRecordId),
+  AllTongues,
+  External(String),
+}
+
+impl LinkTarget {
+  pub fn href(&self) -> String {
+    match self {
+      LinkTarget::Home => "/".to_owned(),
+      LinkTarget::Login => "/auth/login".to_owned(),
+      LinkTarget::Signup => "/auth/signup".to_owned(),
+      LinkTarget::Account => "/account".to_owned(),
+      LinkTarget::MotherTongue(id) => format!("/tongue/{}", id.0),
+      LinkTarget::AllTongues => "/all-tongues".to_owned(),
+      LinkTarget::External(href) => href.to_owned(),
+    }
+  }
+
+  pub fn new_tab(&self) -> bool { matches!(self, LinkTarget::External(_)) }
+}
+
 #[component]
 pub fn App() -> impl IntoView {
   // Provides context that manages stylesheets, titles, meta tags, etc.

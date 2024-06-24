@@ -2,7 +2,10 @@
 
 use leptos::*;
 
-use crate::components::{logout::Logout, Link, LinkTarget};
+use crate::{
+  components::{logout::Logout, Link},
+  LinkTarget,
+};
 
 #[component]
 pub fn NavBar() -> impl IntoView {

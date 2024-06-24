@@ -4,6 +4,7 @@ use crate::{
   components::*,
   functions::auth::{Signup, SignupParams},
   helpers::navigation::navigate_to,
+  LinkTarget,
 };
 
 #[derive(Clone, PartialEq)]

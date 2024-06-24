@@ -14,6 +14,7 @@ use crate::{
   components::*,
   functions::auth::{Login, LoginParams},
   helpers::navigation::navigate_to,
+  LinkTarget,
 };
 
 #[island]
