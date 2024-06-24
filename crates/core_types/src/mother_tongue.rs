@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-use crate::meta::Meta;
-
 pub const MOTHER_TONGUE_TABLE: &str = "mother_tongues";
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -14,5 +12,4 @@ pub struct MotherTongue {
   pub name:        String,
   pub description: String,
   pub is_vetted:   bool,
-  pub meta:        Meta,
 }

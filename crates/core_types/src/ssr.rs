@@ -49,8 +49,6 @@ pub trait CoreModel:
 
   /// Get the ID for this model.
   fn id(&self) -> Self::Id;
-  /// Get the metadata for this model.
-  fn meta(&self) -> &crate::Meta;
 }
 
 /// A type that can be used as an id for a model.
@@ -109,7 +107,6 @@ macro_rules! impl_table {
     impl CoreModel for $model_type {
       type Id = $id_type;
       fn id(&self) -> $id_type { self.id }
-      fn meta(&self) -> &crate::Meta { &self.meta }
     }
   };
 }

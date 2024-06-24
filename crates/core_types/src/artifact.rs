@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-use crate::meta::Meta;
-
 pub const ARTIFACT_TABLE: &str = "artifacts";
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -12,5 +10,4 @@ pub struct ArtifactRecordId(pub ulid::Ulid);
 pub struct Artifact {
   pub id:         ArtifactRecordId,
   pub object_key: String,
-  pub meta:       Meta,
 }

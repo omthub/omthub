@@ -103,7 +103,6 @@ impl Backend {
       name,
       email,
       pw_hash: hash_password(&password)?,
-      meta: core_types::Meta::new(),
       is_active: true,
     };
 
