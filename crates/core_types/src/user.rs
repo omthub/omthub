@@ -31,7 +31,7 @@ mod iso8601 {
   where
     S: Serializer,
   {
-    let s = format!("{}", date.format(&Iso8601::DEFAULT).unwrap());
+    let s = date.format(&Iso8601::DEFAULT).unwrap();
     serializer.serialize_str(&s)
   }
 
