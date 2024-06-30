@@ -91,7 +91,7 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
           <HeroIconsArrowLeftStartOnRectangle />
           <p class="text-sm">"Log out"</p>
           <div class="flex-1" />
-          { move || status_icon() }
+          { status_icon }
         </button>
       </div>
     </div>
