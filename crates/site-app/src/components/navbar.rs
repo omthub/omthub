@@ -42,8 +42,27 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
   let logout_pending = logout_action.pending();
   let logout_value = logout_action.value();
 
-  let show_loading =
-    move || logout_pending() || matches!(logout_value(), Some(Ok(())));
+  let status_icon = move || match (logout_pending(), logout_value()) {
+    (true, Some(_)) => unimplemented!("should be impossible :)"),
+    (true, None) => Some(
+      view! {
+        <div
+          class="spinner-circle spinner-xs animate-quick-fade-in"
+          style="--spinner-color: var(--content1);"
+        />
+      }
+      .into_view(),
+    ),
+    (false, Some(_)) => Some(
+      view! {
+        <div class="animate-quick-fade-in">
+          <HeroIconsCheck />
+        </div>
+      }
+      .into_view(),
+    ),
+    (false, None) => None,
+  };
 
   create_effect(move |_| {
     if matches!(logout_value(), Some(Ok(_))) {
@@ -66,9 +85,7 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
           <HeroIconsArrowLeftStartOnRectangle />
           <p class="text-sm">"Log out"</p>
           <div class="flex-1" />
-          { move || show_loading().then_some(view! {
-            <div class="spinner-circle spinner-xs" style="--spinner-color: var(--content1);" />
-          }) }
+          { move || status_icon() }
         </button>
       </div>
     </div>
@@ -89,6 +106,15 @@ pub fn HeroIconsArrowLeftStartOnRectangle() -> impl IntoView {
   view! {
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
       <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+    </svg>
+  }
+}
+
+#[component]
+pub fn HeroIconsCheck() -> impl IntoView {
+  view! {
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
     </svg>
   }
 }
