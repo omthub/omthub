@@ -20,10 +20,15 @@ module.exports = {
         "slide-down": {
           '0%': { transform: 'translateY(-100%)', opacity: '0%' },
           '100%': { transform: 'translateY()', opacity: '100%' },
+        },
+        "fade-in": {
+          '0%': { opacity: '0%' },
+          '100%': { opacity: '100%' },
         }
       },
       animation: {
         "slide-down": 'slide-down 0.1s ease-out',
+        "quick-fade-in": 'fade-in 0.2s ease-out',
       },
     },
   },
