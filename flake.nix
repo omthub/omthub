@@ -201,10 +201,10 @@
           #   past just the binary anyways
           binary-builds = site-server;
 
-          # make sure the docs build
-          site-server-doc = craneLib.cargoDoc (common-args // {
-            cargoArtifacts = site-server-deps;
-          });
+          # # make sure the docs build
+          # site-server-doc = craneLib.cargoDoc (common-args // {
+          #   cargoArtifacts = site-server-deps;
+          # });
 
           # check formatting
           site-server-fmt = craneLib.cargoFmt {

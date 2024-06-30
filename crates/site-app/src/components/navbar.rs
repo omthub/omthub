@@ -4,6 +4,7 @@ use leptos::*;
 
 use crate::{
   components::{
+    action_status::ActionStatus,
     icons::{
       HeroIconsArrowLeftStartOnRectangle, HeroIconsCheck, HeroIconsUserCircle,
     },
@@ -48,27 +49,7 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
   let logout_pending = logout_action.pending();
   let logout_value = logout_action.value();
 
-  let status_icon = move || match (logout_pending(), logout_value()) {
-    (true, Some(_)) => unimplemented!("should be impossible :)"),
-    (true, None) => Some(
-      view! {
-        <div
-          class="spinner-circle spinner-xs animate-quick-fade-in"
-          style="--spinner-color: var(--content1);"
-        />
-      }
-      .into_view(),
-    ),
-    (false, Some(_)) => Some(
-      view! {
-        <div class="animate-quick-fade-in">
-          <HeroIconsCheck />
-        </div>
-      }
-      .into_view(),
-    ),
-    (false, None) => None,
-  };
+  let logout_status = ActionStatus::new(&logout_action);
 
   create_effect(move |_| {
     if matches!(logout_value(), Some(Ok(_))) {
@@ -91,7 +72,7 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
           <HeroIconsArrowLeftStartOnRectangle />
           <p class="text-sm">"Log out"</p>
           <div class="flex-1" />
-          { status_icon }
+          { logout_status }
         </button>
       </div>
     </div>
