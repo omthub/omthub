@@ -1,3 +1,4 @@
+pub mod icons;
 pub mod logout;
 pub mod mini_pages;
 pub mod mother_tongues_table;
