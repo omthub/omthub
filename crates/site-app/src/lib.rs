@@ -17,6 +17,7 @@ pub enum LinkTarget {
   Account,
   MotherTongue(core_types::MotherTongueRecordId),
   AllTongues,
+  NewTranslation,
   External(String),
 }
 
@@ -29,6 +30,7 @@ impl LinkTarget {
       LinkTarget::Account => "/account".to_owned(),
       LinkTarget::MotherTongue(id) => format!("/tongue/{}", id.0),
       LinkTarget::AllTongues => "/all-tongues".to_owned(),
+      LinkTarget::NewTranslation => "/new-translation".to_owned(),
       LinkTarget::External(href) => href.to_owned(),
     }
   }
@@ -45,6 +47,11 @@ impl LinkTarget {
         LinkTarget::MotherTongue(*id),
       ],
       LinkTarget::AllTongues => vec![LinkTarget::Home, LinkTarget::AllTongues],
+      LinkTarget::NewTranslation => vec![
+        LinkTarget::Home,
+        LinkTarget::Account,
+        LinkTarget::NewTranslation,
+      ],
       LinkTarget::External(_) => {
         unimplemented!("cannot calculate link chain for eternal link")
       }
@@ -59,6 +66,7 @@ impl LinkTarget {
       LinkTarget::Account => "Account",
       LinkTarget::MotherTongue(_) => "Mother Tongue",
       LinkTarget::AllTongues => "All Tongues",
+      LinkTarget::NewTranslation => "New Translation",
       LinkTarget::External(_) => {
         unimplemented!("name unknowable for external link")
       }
@@ -94,12 +102,13 @@ pub fn App() -> impl IntoView {
         }
       >
         <Routes>
-          <Route path="/" view=crate::pages::homepage::HomePage />
-          <Route path="/all-tongues" view=crate::pages::all_tongues::AllTonguesPage />
-          <Route path="/auth/signup" view=crate::pages::signup::SignupPage />
-          <Route path="/auth/login" view=crate::pages::login::LoginPage />
-          <Route path="/account" view=crate::pages::account::AccountPage />
+          <Route path={LinkTarget::Home.href()} view=crate::pages::homepage::HomePage />
+          <Route path={LinkTarget::AllTongues.href()} view=crate::pages::all_tongues::AllTonguesPage />
+          <Route path={LinkTarget::Signup.href()} view=crate::pages::signup::SignupPage />
+          <Route path={LinkTarget::Login.href()} view=crate::pages::login::LoginPage />
+          <Route path={LinkTarget::Account.href()} view=crate::pages::account::AccountPage />
           <Route path="/tongue/:id" view=crate::pages::mother_tongue::MotherTonguePage />
+          <Route path={LinkTarget::NewTranslation.href()} view=crate::pages::new_translation::NewTranslationPage />
         </Routes>
       </Router>
     </crate::components::PageWrapper>
