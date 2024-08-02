@@ -1,6 +1,6 @@
 #[cfg(feature = "ssr")]
 use eyre::{Context, Result};
-use leptos::*;
+use leptos::prelude::*;
 
 #[cfg(feature = "ssr")]
 use crate::functions::handle_error;

@@ -1,5 +1,5 @@
 #![allow(unused)]
-use leptos::*;
+use leptos::prelude::*;
 
 pub fn navigate_to(path: &str) {
   logging::log!("navigating to: {}", path);

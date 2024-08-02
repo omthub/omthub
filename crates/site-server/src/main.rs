@@ -9,7 +9,7 @@ use axum::{
   Router,
 };
 use color_eyre::eyre::{Context, Result};
-use leptos::*;
+use leptos::prelude::*;
 use leptos_axum::{
   generate_route_list, handle_server_fns_with_context, LeptosRoutes,
 };

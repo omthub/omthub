@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use leptos::*;
+use leptos::prelude::*;
 
 use crate::{
   components::{

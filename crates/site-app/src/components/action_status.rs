@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use leptos::*;
+use leptos::prelude::*;
 
 use crate::components::icons::HeroIconsCheck;
 

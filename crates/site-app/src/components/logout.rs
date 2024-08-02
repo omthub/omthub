@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 
 #[cfg_attr(feature = "ssr", tracing::instrument)]
 #[server(Logout)]

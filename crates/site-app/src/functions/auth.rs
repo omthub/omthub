@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use leptos::*;
+use leptos::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialEq, Serialize, Deserialize)]

@@ -6,7 +6,7 @@ pub mod mother_tongues_table;
 pub mod navbar;
 pub mod pagination;
 
-use leptos::*;
+use leptos::prelude::*;
 pub use navbar::*;
 
 #[component]

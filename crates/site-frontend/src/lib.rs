@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 #[allow(unused_imports)]
 use site_app::*;
 use wasm_bindgen::prelude::wasm_bindgen;

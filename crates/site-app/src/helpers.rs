@@ -1,6 +1,6 @@
 pub mod navigation;
 
-use leptos::*;
+use leptos::prelude::*;
 
 pub fn get_auth_context() -> core_types::LoggedInUser {
   // flatten Option<LoggedInUser(Option<PublicUser>)> to LoggedInUser

@@ -4,7 +4,7 @@ mod functions;
 mod helpers;
 mod pages;
 
-use leptos::*;
+use leptos::prelude::*;
 use leptos_meta::*;
 use leptos_router::{Route, Router, Routes};
 

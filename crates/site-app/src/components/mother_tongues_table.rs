@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 
 use crate::{
   components::pagination::Pagination, functions::fetch::fetch_mother_tongues,

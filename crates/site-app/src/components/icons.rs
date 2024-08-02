@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 
 macro_rules! hero_icons_component_outline {
   ($name:ident, $path:expr) => {
