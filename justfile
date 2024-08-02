@@ -21,7 +21,7 @@ check:
 	nix flake check -L
 # run surrealdb
 surreal:
-	mkdir /tmp/surreal_data -p && surreal start file:/tmp/omthub_surreal_data --log=info --auth
+	surreal start file:/tmp/omthub_surreal_data --log=info --auth
 # nuke surreal data in /tmp/surreal_data
 wipe-surreal:
 	rm -rf /tmp/omthub_surreal_data
