@@ -31,7 +31,7 @@ web-sys.workspace = true
 [features]
 default = []
 hydrate = [
-  "leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate",
+  "leptos/hydrate", # "leptos_router/hydrate", "leptos_meta/hydrate",
 ]
 ssr = [
   "leptos/ssr", "leptos/tracing", "leptos_meta/ssr", "leptos_router/ssr",
