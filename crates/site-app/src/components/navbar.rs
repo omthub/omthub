@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use leptos::prelude::*;
+use leptos::{either::Either, prelude::*};
 
 use crate::{
   components::{
@@ -28,13 +28,13 @@ pub fn NavBar() -> impl IntoView {
         </div>
         <div class="navbar-end">
           { match user.0 {
-            Some(user) => view! {
+            Some(user) => Either::Left(view! {
               <AccountDropdown user=user />
-            }.into_view(),
-            None => view! {
+            }),
+            None => Either::Right(view! {
               <Link target=LinkTarget::Signup class="navbar-item">{ LinkTarget::Signup.name() }</Link>
               <Link target=LinkTarget::Login class="navbar-item">{ LinkTarget::Login.name() }</Link>
-            }.into_view(),
+            }),
           }}
         </div>
       </div>
@@ -45,13 +45,13 @@ pub fn NavBar() -> impl IntoView {
 
 #[island]
 pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
-  let logout_action = create_server_action::<Logout>();
+  let logout_action = ServerAction::<Logout>::new();
   let logout_pending = logout_action.pending();
   let logout_value = logout_action.value();
 
   let logout_status = ActionStatus::new(&logout_action);
 
-  create_effect(move |_| {
+  Effect::new(move |_| {
     if matches!(logout_value(), Some(Ok(_))) {
       crate::helpers::navigation::reload();
     }
@@ -72,7 +72,7 @@ pub fn AccountDropdown(user: core_types::PublicUser) -> impl IntoView {
           <HeroIconsArrowLeftStartOnRectangle />
           <p class="text-sm">"Log out"</p>
           <div class="flex-1" />
-          { logout_status }
+          { logout_status.view() }
         </button>
       </div>
     </div>

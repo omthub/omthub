@@ -10,7 +10,7 @@ pub fn Pagination(
 ) -> impl IntoView {
   let class = move || format!("pagination {}", class.get().unwrap_or_default());
 
-  let range = create_memo(move |_| {
+  let range = Memo::new(move |_| {
     select_page_range(
       current_page.get(),
       max_pages_to_display.get().unwrap_or(5),
@@ -32,8 +32,8 @@ pub fn Pagination(
   let left_button = move || {
     view! {
       <button
-        class="btn" disabled={move || current_page() == 0}
-        on:click={move |_| left_one_page()}
+        class="btn" disabled=move || current_page() == 0
+        on:click=move |_| left_one_page()
       >
         <LeftArrowSvg />
       </button>
@@ -42,8 +42,8 @@ pub fn Pagination(
   let right_button = move || {
     view! {
       <button
-        class="btn" disabled={move || total_pages() == 0 || current_page() == total_pages() - 1}
-        on:click={move |_| right_one_page()}
+        class="btn" disabled=move || total_pages() == 0 || current_page() == total_pages() - 1
+        on:click=move |_| right_one_page()
       >
         <RightArrowSvg />
       </button>

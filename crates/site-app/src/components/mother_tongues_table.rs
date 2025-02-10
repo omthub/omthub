@@ -1,4 +1,4 @@
-use leptos::prelude::*;
+use leptos::{either::Either, prelude::*};
 
 use crate::{
   components::pagination::Pagination, functions::fetch::fetch_mother_tongues,
@@ -8,52 +8,47 @@ const DEFAULT_FETCH_LIMIT: usize = 10;
 
 #[island]
 pub fn MotherTonguesTable() -> impl IntoView {
-  let (query_term, set_query_term) = create_signal(String::new());
-  let (current_page, set_current_page) = create_signal(0_u32);
-  let tongues = create_resource(
+  let (query_term, set_query_term) = signal(String::new());
+  let (current_page, set_current_page) = signal(0_u32);
+  let tongues = Resource::new(
     move || {
-      with!(|query_term, current_page| {
-        let term = if query_term.is_empty() {
-          None
-        } else {
-          Some(query_term)
-        };
-        (
-          term.cloned(),
-          *current_page * DEFAULT_FETCH_LIMIT as u32,
-          DEFAULT_FETCH_LIMIT as _,
-        )
-      })
+      let term = query_term.get();
+      let term = if term.is_empty() { None } else { Some(term) };
+      (
+        term,
+        current_page.get() * DEFAULT_FETCH_LIMIT as u32,
+        DEFAULT_FETCH_LIMIT as _,
+      )
     },
     move |(term, offset, count)| fetch_mother_tongues(term, offset, count),
   );
 
   let table_element = move || {
-    tongues().map(|d| match d {
-      Ok((data, count)) => {
-        let page_count =
-          (count as f32 / DEFAULT_FETCH_LIMIT as f32).ceil() as u32;
-        view! {
-          <InnerMotherTonguesTable>
-            <tbody>
-              <For
-                each=move || data.clone() key={|t| t.id}
-                children={ move |d| view! { <MotherTonguesTableRow d={d} /> } }
-              />
-            </tbody>
-          </InnerMotherTonguesTable>
-          <Pagination class="self-center"
-            total_pages={page_count.into()}
-            current_page={current_page.into()}
-            set_page=set_current_page
-          />
+    Suspend::new(async move {
+      match tongues.await {
+        Ok((data, count)) => {
+          let page_count =
+            (count as f32 / DEFAULT_FETCH_LIMIT as f32).ceil() as u32;
+          Either::Left(view! {
+            <InnerMotherTonguesTable>
+              <tbody>
+                <For
+                  each=move || data.clone() key={|t| t.id}
+                  children={ move |d| view! { <MotherTonguesTableRow d={d} /> } }
+                />
+              </tbody>
+            </InnerMotherTonguesTable>
+            <Pagination class="self-center"
+              total_pages={page_count.into()}
+              current_page={current_page.into()}
+              set_page=set_current_page
+            />
+          })
         }
-        .into_view()
+        Err(_) => Either::Right(view! {
+          <p>"Something went wrong. We apologize. Try reloading the page."</p>
+        }),
       }
-      Err(_) => view! {
-        <p>"Something went wrong. We apologize. Try reloading the page."</p>
-      }
-      .into_view(),
     })
   };
 
@@ -76,7 +71,7 @@ pub fn MotherTonguesTable() -> impl IntoView {
 #[component]
 fn Tooltip(tooltip: String, children: Children) -> impl IntoView {
   view! {
-    <span class="tooltip tooltip-top max-w-32" data-tooltip={ tooltip }>
+    <span class="tooltip tooltip-top max-w-32" data-tooltip=tooltip>
       { children() }
     </span>
   }

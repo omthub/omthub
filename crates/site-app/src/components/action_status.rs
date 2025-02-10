@@ -1,16 +1,20 @@
 #![allow(non_snake_case)]
 
-use leptos::prelude::*;
+use leptos::{either::Either, prelude::*};
 
 use crate::components::icons::HeroIconsCheck;
 
 pub struct ActionStatus {
-  loading: Box<dyn Fn() -> bool>,
-  success: Box<dyn Fn() -> bool>,
+  loading: Box<dyn Fn() -> bool + Send>,
+  success: Box<dyn Fn() -> bool + Send>,
 }
 
 impl ActionStatus {
-  pub fn new<T, O: Clone, E: Clone>(
+  pub fn new<
+    T: Send + Sync + 'static,
+    O: Clone + Send + Sync + 'static,
+    E: Clone + Send + Sync + 'static,
+  >(
     action: &Action<T, Result<O, E>>,
   ) -> ActionStatus {
     let value = action.value();
@@ -21,15 +25,14 @@ impl ActionStatus {
   }
 }
 
-impl IntoView for ActionStatus {
-  fn into_view(self) -> View {
-    (move || match ((self.loading)(), (self.success)()) {
+impl ActionStatus {
+  pub fn view(self) -> impl IntoView {
+    move || match ((self.loading)(), (self.success)()) {
       (true, true) => unimplemented!("should be impossible :)"),
-      (true, false) => Some(ActionStatusLoading().into_view()),
-      (false, true) => Some(ActionStatusSuccess().into_view()),
+      (true, false) => Some(Either::Left(ActionStatusLoading())),
+      (false, true) => Some(Either::Right(ActionStatusSuccess())),
       (false, false) => None,
-    })
-    .into_view()
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use leptos::prelude::*;
+use leptos::{logging::error, prelude::*};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
@@ -57,7 +57,7 @@ pub async fn signup(params: SignupParams) -> Result<(), ServerFnError> {
     .signup(name, email.clone(), password.clone())
     .await
     .map_err(|e| {
-      logging::error!("Failed to sign up: {:?}", e);
+      error!("Failed to sign up: {:?}", e);
       ServerFnError::new("Failed to sign up")
     })?;
 

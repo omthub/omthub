@@ -2,7 +2,7 @@ pub mod auth;
 pub mod fetch;
 
 #[cfg(feature = "ssr")]
-use leptos::ServerFnError;
+use leptos::prelude::ServerFnError;
 
 #[cfg(feature = "ssr")]
 pub fn handle_error(

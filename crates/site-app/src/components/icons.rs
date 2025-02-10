@@ -6,12 +6,11 @@ macro_rules! hero_icons_component_outline {
     pub fn $name(
       #[prop(optional, into)] class: MaybeProp<String>,
     ) -> impl IntoView {
-      let class = class.into_signal();
       view! {
         <svg
           xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
           stroke-width="1.5" stroke="currentColor"
-          class={move || format!("size-6 {}", class().unwrap_or_default())}
+          class={move || format!("size-6 {}", class().unwrap_or("".to_owned()))}
         >
           <path stroke-linecap="round" stroke-linejoin="round" d=$path />
         </svg>

@@ -6,7 +6,7 @@ pub mod mother_tongues_table;
 pub mod navbar;
 pub mod pagination;
 
-use leptos::prelude::*;
+use leptos::{prelude::*, *};
 pub use navbar::*;
 
 #[component]
@@ -34,20 +34,21 @@ pub fn Link(
   #[prop(optional, into)] class: MaybeProp<String>,
   #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
-  let target = target.into_signal();
-  let href = move || with!(|target| target.href());
-  let target_attr = move || {
-    with!(|target| match target.new_tab() {
-      true => "_blank",
-      false => "",
-    })
+  let target = match target {
+    MaybeSignal::Static(v) => Signal::derive(move || v.clone()),
+    MaybeSignal::Dynamic(s) => s,
   };
-  let rel = move || {
-    with!(|target| match target.new_tab() {
-      true => "noopener noreferrer",
-      false => "",
-    })
+
+  let href = move || target().href();
+  let target_attr = move || match target().new_tab() {
+    true => "_blank",
+    false => "",
   };
+  let rel = move || match target().new_tab() {
+    true => "noopener noreferrer",
+    false => "",
+  };
+  let class = move || class.get().unwrap_or("".to_owned());
 
   view! {
     <a class=class href=href target=target_attr rel=rel>

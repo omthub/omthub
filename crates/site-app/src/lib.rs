@@ -6,7 +6,10 @@ mod pages;
 
 use leptos::prelude::*;
 use leptos_meta::*;
-use leptos_router::{Route, Router, Routes};
+use leptos_router::{
+  components::{Route, Router},
+  *,
+};
 
 #[allow(dead_code)]
 #[derive(Clone)]
@@ -87,21 +90,22 @@ pub fn App() -> impl IntoView {
     <Link rel="preload" href="/fonts/inter.ttf" as_="font" type_="font/ttf" crossorigin="anonymous" />
 
     <Title text="OMTHub"/>
-    <Html lang="en" />
+    <Html {..} lang="en" />
     <Meta charset="utf-8"/>
     <Meta name="viewport" content="width=device-width, initial-scale=1"/>
     <Meta name="description" content="A hub for Oral Mother Tongue translations of the bible"/>
 
     <crate::components::PageWrapper>
       <Router
-        trailing_slash=leptos_router::TrailingSlash::Redirect
-        fallback=|| {
-          let mut outside_errors = Errors::default();
-          outside_errors.insert_with_default_key(error_template::AppError::NotFound);
-          view! { <error_template::ErrorTemplate outside_errors/> }.into_view()
-        }
+        // trailing_slash=leptos_router::TrailingSlash::Redirect
       >
-        <Routes>
+        <leptos_router::components::Routes
+          fallback=|| {
+            let mut outside_errors = Errors::default();
+            outside_errors.insert_with_default_key(error_template::AppError::NotFound);
+            view! { <error_template::ErrorTemplate outside_errors/> }.into_view()
+          }
+        >
           <Route path={LinkTarget::Home.href()} view=crate::pages::homepage::HomePage />
           <Route path={LinkTarget::AllTongues.href()} view=crate::pages::all_tongues::AllTonguesPage />
           <Route path={LinkTarget::Signup.href()} view=crate::pages::signup::SignupPage />
@@ -109,7 +113,7 @@ pub fn App() -> impl IntoView {
           <Route path={LinkTarget::Account.href()} view=crate::pages::account::AccountPage />
           <Route path="/tongue/:id" view=crate::pages::mother_tongue::MotherTonguePage />
           <Route path={LinkTarget::NewTranslation.href()} view=crate::pages::new_translation::NewTranslationPage />
-        </Routes>
+        </leptos_router::components::Routes>
       </Router>
     </crate::components::PageWrapper>
   }
